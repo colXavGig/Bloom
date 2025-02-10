@@ -12,7 +12,7 @@ A distributed version control system. An alternative to git and github
 
 ## Objectif
 
-### Objectif personel
+### Objectif personnel
 
 #### Aprentissage
 

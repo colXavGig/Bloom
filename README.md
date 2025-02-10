@@ -6,7 +6,7 @@ A distributed version control system. An alternative to git and github
 1. [Objectif](#Objectif)
     - [Objectif personnel](#Objectif-personnel)
     - [Objectif du projet](#Objectif-du-projet)
-2. [Exigence fonctionnel](#Exigence-fonctionnel)
+2. [Exigence fonctionnelle](#Exigence-fonctionnelle)
 3. [Sytèmes](#Systèmes)
 4. [Technologie et outils](#Technologie-et-outils)
 

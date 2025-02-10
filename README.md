@@ -1,11 +1,14 @@
 # Bloom
 A distributed version control system. An alternative to git and github
 
+  __TABLE DE MATIERE__
+  
 1. [Objectif](#Objectif)
     - [Objectif personnel](#Objectif-personnel)
     - [Objectif du projet](#Objectif-du-projet)
 2. [Exigence fonctionnel](#Exigence-fonctionnel)
-3. [Ssytèmes](#Systèmes)
+3. [Sytèmes](#Systèmes)
+4. [Technologie et outils](#Technologie-et-outils)
 
 ## Objectif
 

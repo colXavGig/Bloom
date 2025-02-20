@@ -1,29 +1,18 @@
-#include <stdio.h>
+#include <filesystem>
+#include <Windows.h>
 #include <string>
 #include <vector>
 namespace std{
 class Node {
     protected:
         string hash;
-
+        filesystem::path path;
+        bool is_directory;
+        vector<Node*> node_List;
     public:
         virtual void setHash();
 };
 
-class tree : public Node {
-    private:
-        vector<Node*> node_List;
-
-    public:
-        void setHash()override;
-};
-
-class flower : public Node {
-    private:
-
-    public:
-        void setHash()override;
-};
 
 class HashTree{
     protected:
@@ -33,7 +22,13 @@ class HashTree{
     void createIterator(this);
 
     public:
-    void getCurrentDirectory();
+    HashTree():{
+
+    }
+    addNode(){
+        node_List.put_back()
+    }
+    
 }
 
 }

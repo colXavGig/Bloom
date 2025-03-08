@@ -27,4 +27,4 @@ void HashTree::getCurrentDirectory(){
         cerr << "Unable to get directory";
     }
 }
-};
+}

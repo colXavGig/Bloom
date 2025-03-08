@@ -1,10 +1,9 @@
 #include "Petal.h"
 
-
 Petal *get_petal(FILE *file) {
     char *line;
     int line_len;
-    if (getline(line, &line_len, file) != 0) {
+    if (getline(&line, &line_len, file) != 0) {
         free(file);
         perror("Could not get doccument line\n");
         exit(2);
@@ -19,7 +18,7 @@ Petal *get_petal(FILE *file) {
 
     SHA1((const unsigned char *)line, line_len, petal->hash);
 
-    petal->line.value = (char (*)[])malloc(sizeof(char[line_len]));
+    petal->line.value = (char *)malloc(sizeof(char[line_len]));
     if (petal == NULL) {
         free(file);
         free(petal);

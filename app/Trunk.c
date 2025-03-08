@@ -1,10 +1,37 @@
 #include "Trunk.h"
+#include "PathList.c"
+#include "filesys_utils.c"
 
-Trunk *get_trunk(String dir_path) {
+int get_trunk_hash(Path dir_path, Hash *out) {
+    Trunk *trunk = newTrunk();
+    if (trunk ==NULL) {
+        puts("could not generate tunk");
+        return NULL;
+    }
+
+    PathList *pathList = newPathList(10);
+    get_dir_content(dir_path.name.value, pathList);
+    SHA_CTX ctx;
+    SHA1_Init(&ctx);
+    for (int i = 0; i < pathList->ctx.length; i++) {
+        Path p = (*pathList->paths)[i];
+        if (strcmp(p.type.value, "dir") == 0) {
+            Hash h;
+            (void)get_trunk_hash(p, &h);
+            SHA1_Update(&ctx, &h, sizeof h);
+        } else if (strcmp(p.name.value, "file") == 0) {
+            //Hash h = get
+        }
+        
+    }
+    
+    SHA1_Final(out, &ctx);
+    return 0;
+    
 
 }
 
-Trunk *new_Trunk() {
+Trunk *newTrunk() {
     Trunk *trunk = (Trunk *)malloc(sizeof(trunk));
     if (trunk == NULL) {
         printf("Could not allocate memory for trunk");

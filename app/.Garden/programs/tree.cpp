@@ -30,8 +30,12 @@ class Node{
 
         //getters 
         fs::path getPath(){return path;}
+
         bool getIsDirectory(){return is_directory;}
+        
         vector<Node*> getNodeList(){return node_list;}
+
+        //fonction
         void addNode(Node* node){
             if(is_directory){
             node_list.push_back(node);

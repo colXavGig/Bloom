@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.jsp": "java",
-        "string": "cpp",
-        "format": "cpp"
-    }
-}

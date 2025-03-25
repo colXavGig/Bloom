@@ -34,4 +34,3 @@ int push_back(struct StringVector *vec,unsigned char* data){
     vec->size++;
     return 1;
 }
-

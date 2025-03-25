@@ -1,4 +1,4 @@
-#include "gardenTags.h"
+#include "GardenTags.h"
 using namespace std;
 
 class gardenTags{

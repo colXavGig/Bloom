@@ -1,3 +1,0 @@
-.settings
-[FILE] d77de4760e93d839b215faaa7f73c0d136538359 org.eclipse.core.resources.prefs
-[FILE] c73eee424a84ab54923c85b263b8333f0ea061a5 org.eclipse.jdt.core.prefs

@@ -2,13 +2,13 @@
 #include "fileWriter/fileWriter.h"
 
 int main(){
-    
-    HashTree HTree =  HashTree(
+    FolderNode *root = new FolderNode(
         "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\testing");
+    HashTree HTree =  HashTree(root);
 
     fileWriter fw = fileWriter(
         "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\.garden\\seeds");
-    fw.CreateGarden(*HTree.getRoot());
+    fw.createGarden(HTree.getRoot());
     cout<<"succes";
     getchar();
 }

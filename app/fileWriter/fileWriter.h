@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-#include "../garden_tags/gardenTags.h"
+//#include "../garden_tags/gardenTags.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
 
@@ -14,26 +14,23 @@ namespace fs = std::filesystem;
 */
 class fileWriter{
     public:
-        HashNode* node;
+        //HashNode* node;
         fs::path gardenpath;
-        gardenTags tag;
-        void createFileStructure(const HashNode &node,string &foldername,string &filename);
+        //gardenTags tag;
+        void createFileStructure(string s,string &folder,string &file);
 
-        void fileToGarden(const HashNode &node);
+        void savingFile(const FileNode *node);
         //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
-        
-        void FolderToFile(const HashNode &file, string filename);
 
-        void folderToGarden(const HashNode &node);
+        void savingFolder(const FolderNode *node);
         
     public:
 
-        fileWriter(HashNode* node,fs::path gardenlocation){
-            this->gardenpath=gardenlocation;
-             this->tags= gardenTags(node);
+        fileWriter(fs::path gardenlocation)/*: tag(node)*/ {
+            this->gardenpath=gardenlocation;   
         };
 
-        void CreateGarden(HashNode current);
+        void createGarden(FolderNode *current);
 
 };
 

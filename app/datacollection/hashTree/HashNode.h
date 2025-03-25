@@ -19,42 +19,66 @@ Propriete 2: le hash du dir/fichier
 propriete 3:
 */
 class HashNode{
-    private:
-        bool isfile;
-        vector<HashNode *> hnode_array;
+    protected:
         string signature;
         fs::path path;
-        string name;
-
-        //helper functions
-        void HtoS(const unsigned char* hash);
-        string fullhash();
-        void HashString(const string& s);
+        string filename;    
+        //constructor
+        HashNode(const fs::path &p):path(p),filename(p.filename().string()){}
     public:
-        //constructeur
-        vector<HashNode *> getNodeArray()const {
-            return this->hnode_array;
-        }
         //setters
-        void setSignature(const char *path);
+        virtual void setSignature()=0;
 
-        void setIsFile(bool b){
-            this->isfile=b;
-        }
         void setPath(fs::path path){
             this->path=path;
-        }
-        void setNode(HashNode * node){
-            hnode_array.push_back(node);
-        }
+        }       
         //getters
-        bool getIsFile() const{
-            return this->isfile;
-        }
         string getSignature() const{
             return this->signature;
         }
         fs::path getPath() const {
             return this->path;
+        }
+        string getFileName() const{
+            return this->filename;
+        }
+ };
+
+
+ class FileNode :public HashNode{
+    public:
+    void setSignature();
+    FileNode(const fs::path &p):HashNode(p){
+        setSignature();
+    }
+    
+ };
+
+
+ class FolderNode :public HashNode{
+    private:
+        //afin d'eviter le dynamic casting je fais deux vector 
+        //un pour files et l'autre pour fichier
+        vector<FileNode *> fileNodes;
+        vector<FolderNode *> folderNodes;
+        string fullhash();
+    public:
+        void setSignature();
+
+        FolderNode(const fs::path &p):HashNode(p){ }
+        
+        vector<FileNode *> getFiles()const {
+            return this->fileNodes;
+        }
+
+        vector<FolderNode *> getFolders()const {
+            return this->folderNodes;
+        }
+
+        void addfile(FileNode *node){
+            fileNodes.push_back(node);
+        }
+        void addfolder(FolderNode *node){
+            folderNodes.push_back(node);
         }
  };

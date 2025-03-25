@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <filesystem>
 #include "HashNode.h"
 #include "../../processes/Hashing.h"
 using namespace std;
@@ -13,17 +12,17 @@ Sa responsabilite: creer un tree avec la class HashNodes
 */
 class HashTree{
     private:
-        HashNode root;
-        fs::path fsdirectory;
-        
-        void createTree(HashNode *pnode,fs::path directory);
+        FolderNode *root;    
+        void createTree(FolderNode *parentNode);
     public:
-        HashTree(fs::path directory);
+        HashTree(FolderNode *root);
 
         void printTree(HashNode* node, int depth = 0);
 
-        HashNode* getRoot() {
-            return &this->root;
+        //void listBranches();
+
+        FolderNode* getRoot() {
+            return this->root;
         }
 
  };

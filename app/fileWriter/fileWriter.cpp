@@ -1,22 +1,28 @@
-#include "fileWriter.h"
+#include "FileWriter.h"
 
 
-void fileWriter::createFileStructure(const HashNode &node,string &foldername,string &filename){
-    string fullsignature=node.getSignature();
+void fileWriter::createFileStructure(string fullsignature,string &folder,string &file){  
     for(size_t i=0;i<fullsignature.size();i++){
-        (i<2) ? foldername += fullsignature[i] : filename += fullsignature[i];
+        (i<2) ? folder += fullsignature[i] : file += fullsignature[i];
     }
-    filename += node.getPath().extension().string();
+    
 }
-
-void fileWriter::fileToGarden(const HashNode &node){
-    string foldername,filename;
+void fileWriter::savingFile(const FileNode *node){
+    cout<<"FILE\n";
+    //initialise path;
     fs::path temp_path=gardenpath;
-    createFileStructure(node,foldername,filename);
-    temp_path/=foldername;
+    //create fold
+    string folder,file;
+    cout<<"\tsignature "<<node->getSignature()<<"\n";
+    createFileStructure(node->getSignature(),folder,file);
+    cout<<"\tfolder: "<<folder<<"\n";
+    cout<<"\tfile: "<<file<<"\n";
+    temp_path/=folder;
+
     fs::create_directories(temp_path);
-    if(!fs::exists(temp_path/=filename))
-        fs::copy(node.getPath(),temp_path);  
+    if(!fs::exists(temp_path/=file)){
+        fs::copy(node->getPath(),temp_path);}
+
 }
 //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
 // example : 
@@ -27,40 +33,40 @@ void fileWriter::fileToGarden(const HashNode &node){
 //     file    aexvvsdfa   file1.txt
 //     file    sadfsadff   file2.txt
 //     Folder  asdfhsdfs   subdir
-void fileWriter::FolderToFile(const HashNode &file, string filename){
-    ifstream check(filename+=".txt");
+void fileWriter::savingFolder(const FolderNode *node){
+    cout<<"FOLDER\n";
+    string folder,file;
+    cout<<"\tsignature "<<node->getSignature()<<"\n";
+    createFileStructure(node->getSignature(),folder,file);
+    cout<<"\tfolder: "<<folder<<"\n";
+    cout<<"\tfile: "<<file<<"\n";
+    fs::path temp_path=gardenpath;
 
-    if(check)return;// si fichier existe pas de overwrite  
+    fs::create_directories(temp_path/=folder);
+    
+    ifstream check( temp_path/=file+=".txt");
+    if(check)return;
+    ofstream ofs(temp_path+=".txt");
 
-    ofstream ofs(filename+=".txt");
-    ofs<<file.getPath().filename()<<"\n";
-    for(HashNode *node : file.getNodeArray()){
-        ofs<<((node->getIsFile()) ? "FILE" : "FOLDER")<<" " 
-        << node->getSignature()<<" "<<node->getPath().filename() <<"\n";
+    //writing to folder file
+    ofs<<node->getFileName()<<"\n";
+    for(FileNode *file : node->getFiles()){
+        ofs<<"[FILE]"<<" "<<file->getSignature()<<" "<<file->getFileName()<<"\n";
+    }
+    for(FolderNode *folder : node->getFolders()){
+        ofs<<"[FOLDER]"<<" "<<folder->getSignature()<<" "<<folder->getFileName()<<"\n";
     }
 }
 
-void fileWriter::folderToGarden(const HashNode &node){
-    string foldername,filename;
-    createFileStructure(node,foldername,filename);
-    fs::path temp_path=gardenpath;
-    temp_path/=foldername;
-    fs::create_directories(temp_path);
-    FolderToFile(node,(temp_path/=filename).string());
-   
-}
 
-void fileWriter::CreateGarden(HashNode current){
-    if(current.getIsFile()){
-        cout<<"doing a file\n";
-        fileToGarden(current);
-        return;
-    } else {
-        cout<<"doing a folder\n";
-        for(HashNode *HNode : current.getNodeArray()){
-           CreateGarden(*HNode);
-        }
-        folderToGarden(current);
-    }   
-};
+void fileWriter::createGarden(FolderNode *current){
+    cout<<"about to save seeds\n";
+    for(FileNode* node : current->getFiles()){
+        savingFile(node);
+    }
+    for(FolderNode* node : current->getFolders()){
+        createGarden(node);
+    }
+    savingFolder(current);
+}   
 

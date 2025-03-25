@@ -3,52 +3,34 @@
     Constructeur prends une directory
     et copy le filesystem a partir.
     */
-    HashTree::HashTree(fs::path directory){
-        createTree(&this->root,directory);  
+    HashTree::HashTree(FolderNode *r):root(r) {
+        createTree(root);  
     }
 
     /*
     fonction Recursive, creer le tree et set les information importantes
     pour faire la sauvegarde. 
     */
-    void HashTree::createTree(HashNode *pnode,fs::path current_directory){
-        cout<<"Creating hashTree..."<<"\n";
-        pnode->setPath(current_directory);
-        if(fs::is_regular_file(current_directory)){
-            pnode->setIsFile(true); 
-            pnode->setSignature(current_directory.string().c_str());
-            return;
-        }
+    void HashTree::createTree(FolderNode *parentNode){
         
-        pnode->setIsFile(false);
-        for(const auto &entry: fs::directory_iterator(current_directory)){
-                HashNode *node= new HashNode();
-                pnode->setNode(node);
-                createTree(node,entry.path());
-        }
-        pnode->setSignature(current_directory.string().c_str());
-    }
+        cout<<"creating a folder: "<<parentNode->getFileName()<<"\n";
 
-    /*
-     print le tree avec un depth
-    */
-    void HashTree::printTree(HashNode* node, int depth) {
-        if (!node) return;
-    
-        // Print indentation
-        for (int i = 0; i < depth; i++) std::cout << "  ";
-    
-        // Print node type and signature
-        if (node->getIsFile()) {
-            std::cout << "[FILE] ";
-        } else {
-            std::cout << "[DIR]  ";
+        for(const auto &entry: fs::directory_iterator(parentNode->getPath())){
+            if(fs::is_regular_file(entry)){
+                FileNode *fileNode =  new FileNode(entry);
+                cout<<"creating a file: "<<fileNode->getFileName()<<"\n";
+                parentNode->addfile(fileNode);
+            } 
+            else if(fs::is_directory(entry)){
+                FolderNode *folderNode =  new FolderNode(entry);
+                createTree(folderNode);
+                parentNode->addfolder(folderNode); 
+            }  
         }
-        std::cout << "Signature: " << node->getSignature() << std::endl; 
-        std::cout << "path: " << node->getPath() << std::endl; 
-        for (HashNode* child : node->getNodeArray()) {
-            printTree(child, depth + 1);
-        }
+        parentNode->setSignature();
     }
-    
+ 
+    // void HashTree::listBranches(HashNode* node, int depth){
+    //     return;
+    // }
     

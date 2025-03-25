@@ -1,0 +1,6 @@
+calculatrice
+[FILE] f5eff3bce4dea40e8b4cc8f554b029a2067342f0 .classpath
+[FILE] 9c892901a2d6a135b984b61f590c389f8bc54ed0 .project
+[FOLDER] fe7d8ed750b110842344e606532a392a10d72172 .settings
+[FOLDER] f4793b6b908461df7af0b8612df2d1f90acc06b3 bin
+[FOLDER] 40bfd3979af5d01bb3fe5d824ff90b6322723241 src

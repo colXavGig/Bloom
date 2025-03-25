@@ -1,4 +1,6 @@
 #include "Hashing.h"
+#include <vector>
+
 //boolean
 #define TRUE 1
 #define FALSE 0
@@ -9,10 +11,9 @@
 /*pseudo code de getline
     chercher un char 
     assurer qu'il n'est pas EOF
-    assigner lettre a *line
-    incrementer pointeur
 */
 int getline(FILE* fptr,unsigned char *hash){ 
+
     unsigned char line[LINE_SIZE];
     int i=0,c;
     while((c=fgetc(fptr)) != EOF && c !='\n'){
@@ -22,13 +23,30 @@ int getline(FILE* fptr,unsigned char *hash){
     SHA1(line,strlen((char*)line),hash);
     return (c != EOF) ? TRUE : FALSE;
 }
+
+/*
+    Fonction qui convertit hash to string
+
+    SHA1 fait un 20bytes long hex (0,255) -> donc pour etre capable de transformer le hex en char
+    on doit allocer 2 char.
+*/
+int HtoS(const unsigned char* hash,char* buffer){
+    
+    for (int i = 0; i < HASH_SIZE; i++) {
+        sprintf(buffer + (i *2), "%02x", hash[i]);  
+    };
+
+    return 1;
+}
+
 /*  pseudo code du HashedList
     while ( getline(une ligne, taille maximal de la ligne) est vrai )
         hash -> ligne
         inserer hash dans la liste
 */
-//takes a file 
-int fileHash(const char *filename, unsigned char* hash){
+//takes a file and hashes it
+int fileHash(const char *filename,char* buffer){
+    unsigned char hash[HASH_SIZE];
     StringVector vec;
     //openFile read-only
     FILE *fptr = fopen(filename,"r");
@@ -42,8 +60,11 @@ int fileHash(const char *filename, unsigned char* hash){
         push_back(&vec,hash);
     }
     fclose(fptr);
-    SHA1(vec.data, vec.size * HASH_SIZE, hash);
+    SHA1(vec.data, vec.size * HASH_SIZE, hash);   
+    HtoS(hash,buffer);
+
     return 1;
 }
+
 
 

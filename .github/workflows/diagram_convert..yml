@@ -2,6 +2,8 @@ name: diagram converter
 
 on:
   push:
+    paths:
+      - "./doc/diagrams/*"
 
 
 jobs:

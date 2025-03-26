@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-
+#include "FileBuilder.h"
 using namespace std;
 namespace fs = std::filesystem;
 /* un iterator qui navigue les information requise

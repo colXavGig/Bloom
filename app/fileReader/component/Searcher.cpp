@@ -30,7 +30,7 @@ void Searcher::rebuild(fs::path rootNode,fs::path parentnode){
         ifs>>token;
         if(convert(token) == INCOMPATIBLE) break; 
         getline(ifs,line);
-        process(convert(token),line,rootNode);
+        process(convert(token),line,parentnode);
     }
 }
 
@@ -48,18 +48,15 @@ void Searcher::process(content_token token, string line, fs::path path){
    
     if(token == FILES){
         cout<<"rebuilding file: "<<name<<"\n";
-        //this->findpath(hash);
-        //FileBuilder
+        
+        FileBuilder builder =  FileBuilder(".\\testingReader");
+        builder.buildfile(this->findpath(hash),path/name);
     }
     if(token == FOLDERS){
         cout<<"rebuilding folder: "<<name<<"\n";
-        // FileBuilder
+        FileBuilder builder =  FileBuilder(".\\testingReader");
+        builder.buildfolder(this->findpath(hash),path/name);
         hash+=".txt";
-        this->rebuild(this->findpath(hash),path);
+        this->rebuild(this->findpath(hash),path/name);
     }
-}
-
-
-void dispatchFileBuilder(){
-    //FileBuilder
 }

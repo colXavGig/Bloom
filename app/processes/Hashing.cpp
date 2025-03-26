@@ -7,7 +7,7 @@
 //hash size
 #define HASH_SIZE 20
 //line / file size
-#define LINE_SIZE 256
+#define LINE_SIZE 1000
 /*pseudo code de getline
     chercher un char 
     assurer qu'il n'est pas EOF

@@ -21,7 +21,7 @@ all: main.exe
 	@echo Detected OS: $(detected_OS)
 	
 	
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader.o main.o
+main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader.o FileBuilder.o main.o
 
 	@echo "making executable...\n";
 	g++ $(build)/main.o \
@@ -30,6 +30,7 @@ main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader
 	$(build)/datacollection/StringVector.o \
 	$(build)/filewriter/FileWriter.o  \
 	$(build)/filereader/FileReader.o  \
+	$(build)/filebuilder/FileBuilder.o  \
 	$(build)/hashing/Hashing.o \
 	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe 
 
@@ -65,6 +66,11 @@ FileWriter.o: $(call FIXPATH,$(root)/fileWriter/fileWriter.cpp)
 FileReader.o: $(call FIXPATH,$(root)/fileReader/component/Searcher.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/fileReader/component/Searcher.cpp) -o $(call FIXPATH,$(build)/filereader/FileReader.o)
+	@echo
+	
+FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp) -o $(call FIXPATH,$(build)/filebuilder/FileBuilder.o)
 	@echo
 	
 main.o: $(call FIXPATH,$(root)/main.cpp)

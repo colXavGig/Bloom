@@ -19,9 +19,9 @@ realloc a lieu donc elle alloc sa nouvelle capacite
 */
 int push_back(struct StringVector *vec,unsigned char* data){
   
-    //Si il est rempli, la capacite du vector est augmente de 1.5x 
+    //Si il est rempli, la capacite du vector est augmente de 1.25x 
     if(vec->size==vec->capacity){
-        size_t new_capacity= vec->capacity + (vec->capacity/2);
+        size_t new_capacity= vec->capacity + (vec->capacity/4);
         unsigned char* temp=(unsigned char*)realloc(vec->data,new_capacity*HASH_SIZE);
         if(temp == NULL){
             printf("allocation de memoire failed");

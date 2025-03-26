@@ -8,15 +8,13 @@ void fileWriter::createFileStructure(string fullsignature,string &folder,string 
     
 }
 void fileWriter::savingFile(const FileNode *node){
-    cout<<"FILE\n";
     //initialise path;
     fs::path temp_path=gardenpath;
     //create fold
     string folder,file;
-    cout<<"\tsignature "<<node->getSignature()<<"\n";
+
     createFileStructure(node->getSignature(),folder,file);
-    cout<<"\tfolder: "<<folder<<"\n";
-    cout<<"\tfile: "<<file<<"\n";
+
     temp_path/=folder;
 
     fs::create_directories(temp_path);
@@ -34,12 +32,9 @@ void fileWriter::savingFile(const FileNode *node){
 //     file    sadfsadff   file2.txt
 //     Folder  asdfhsdfs   subdir
 void fileWriter::savingFolder(const FolderNode *node){
-    cout<<"FOLDER\n";
     string folder,file;
-    cout<<"\tsignature "<<node->getSignature()<<"\n";
     createFileStructure(node->getSignature(),folder,file);
-    cout<<"\tfolder: "<<folder<<"\n";
-    cout<<"\tfile: "<<file<<"\n";
+
     fs::path temp_path=gardenpath;
 
     fs::create_directories(temp_path/=folder);
@@ -60,7 +55,7 @@ void fileWriter::savingFolder(const FolderNode *node){
 
 
 void fileWriter::createGarden(FolderNode *current){
-    cout<<"about to save seeds\n";
+
     for(FileNode* node : current->getFiles()){
         savingFile(node);
     }

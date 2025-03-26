@@ -16,6 +16,7 @@ class fileWriter{
     public:
         //HashNode* node;
         fs::path gardenpath;
+        
         //gardenTags tag;
         void createFileStructure(string s,string &folder,string &file);
 

@@ -19,7 +19,7 @@ class HashTree{
 
         void printTree(HashNode* node, int depth = 0);
 
-        //void listBranches();
+        void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() {
             return this->root;

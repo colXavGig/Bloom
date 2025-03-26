@@ -46,10 +46,10 @@ void fileWriter::savingFolder(const FolderNode *node){
     
     ifstream check( temp_path/=file+=".txt");
     if(check)return;
-    ofstream ofs(temp_path+=".txt");
+    ofstream ofs(temp_path);
 
     //writing to folder file
-    ofs<<node->getFileName()<<"\n";
+    ofs<<"[FOLDERNAME]"<<node->getFileName()<<"\n";
     for(FileNode *file : node->getFiles()){
         ofs<<"[FILE]"<<" "<<file->getSignature()<<" "<<file->getFileName()<<"\n";
     }

@@ -11,7 +11,7 @@ int main(int __argc, char** __argv){
         FolderNode *root = new FolderNode("./app/testing");
         HashTree HTree =  HashTree(root);
 
-        fileWriter fw = fileWriter(paths.getGardenPath().string());
+        fileWriter fw = fileWriter(paths.getGardenPath());
         fw.createGarden(HTree.getRoot());
     } else if (cmd == "search")
     {

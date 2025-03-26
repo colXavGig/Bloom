@@ -20,8 +20,10 @@ void fileWriter::savingFile(const FileNode *node){
     temp_path/=folder;
 
     fs::create_directories(temp_path);
+
     if(!fs::exists(temp_path/=file)){
-        fs::copy(node->getPath(),temp_path);}
+        fs::copy(node->getPath(),temp_path);
+    }
 
 }
 //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions

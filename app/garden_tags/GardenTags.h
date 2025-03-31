@@ -6,13 +6,18 @@ using namespace std;
 
 class GardenTags{
     private:
-        HashNode* roots;
+        FolderNode* roots;
     public:
         string note;
-        GardenTags(HashNode* roots):roots(roots){};
+        GardenTags(FolderNode* roots):roots(roots){};
         
     //setters
-    void setRoot(HashNode root);
+    void setRoot(FolderNode root);
     void setNode();
+
+    //getters
+    FolderNode* getRoot(){
+        return this->roots;
+    }
     ostream& operator<<(std::ostream& os);
 };

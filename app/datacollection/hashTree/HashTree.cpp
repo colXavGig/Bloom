@@ -4,14 +4,17 @@
     et copy le filesystem a partir.
     */
     HashTree::HashTree(FolderNode *r):root(r) {
-        createTree(root);  
+        createProjectTree(root);  
     }
 
+    HashTree::HashTree(GardenTags *tag):root(tag->getRoot()) {
+        createGardenTree(root);
+    }
     /*
     fonction Recursive, creer le tree et set les information importantes
     pour faire la sauvegarde. 
     */
-    void HashTree::createTree(FolderNode *parentNode){
+    void HashTree::createProjectTree(FolderNode *parentNode){
         
         cout<<"creating a folder: "<<parentNode->getFileName()<<"\n";
 
@@ -25,13 +28,24 @@
             } 
             else if(fs::is_directory(entry)){                
                     FolderNode *folderNode =  new FolderNode(entry);
-                    createTree(folderNode);
+                    createProjectTree(folderNode);
                     parentNode->addfolder(folderNode); 
             }  
         }
         parentNode->setSignature();
     }
- 
+
+     /*
+    permet de recreer un HashTree a partir du .garden pas concret mais experimental
+    */
+    void HashTree::createGardenTree(FolderNode *parentNode){
+
+
+
+    }
+
+
+
     void HashTree::listBranches(FolderNode* parent){
         for(FileNode* file: parent->getFiles()){
             cout<<file->getPath()<<"\n";               

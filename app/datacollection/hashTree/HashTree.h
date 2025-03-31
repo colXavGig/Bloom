@@ -2,6 +2,7 @@
 #include <iostream>
 #include "HashNode.h"
 #include "../../processes/Hashing.h"
+#include "../../garden_tags/GardenTags.h"
 using namespace std;
 namespace  fs =  std::filesystem;
 /*
@@ -13,10 +14,11 @@ Sa responsabilite: creer un tree avec la class HashNodes
 class HashTree{
     private:
         FolderNode *root;    
-        void createTree(FolderNode *parentNode);
+        void createProjectTree(FolderNode *parentNode);
+        void createGardenTree(FolderNode *parentNode);
     public:
         HashTree(FolderNode *root);
-
+        HashTree(GardenTags *tag);
         void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() {

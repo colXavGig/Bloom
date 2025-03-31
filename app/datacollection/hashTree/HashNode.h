@@ -25,6 +25,9 @@ class HashNode{
         fs::path path; 
         //constructor
         HashNode(const fs::path &p):path(p),filename(p.filename().string()){}
+
+        HashNode(const fs::path path,const string filename,const string signature)
+        :path(path),filename(filename),signature(signature){}
     public:
         //setters
         virtual void setSignature()=0;
@@ -48,10 +51,14 @@ class HashNode{
  class FileNode :public HashNode{
     public:
     void setSignature();
+    //constructeur
     FileNode(const fs::path &p):HashNode(p){
         setSignature();
     }
-    
+
+    //constructeur de garden--> ne hash rien
+    FileNode(const fs::path &path,const string filename,const string signature)
+    :HashNode(path,filename,signature){}
  };
 
 
@@ -64,9 +71,14 @@ class HashNode{
         string fullhash();
     public:
         void setSignature();
-
+        //constructeur
         FolderNode(const fs::path &p):HashNode(p){ }
-        
+
+        //constructeur de garden--> ne hash rien
+        FolderNode(const fs::path &path,const string &filename,const string &signature)
+        :HashNode(path,filename,signature){ }
+
+
         vector<FileNode *> getFiles()const {
             return this->fileNodes;
         }

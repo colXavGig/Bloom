@@ -1,4 +1,6 @@
 #include "HashNode.h"
+#include "../../processes/Hashing.h"
+
 using namespace std;
         /*
         Prends les hash de chaques node dans le node_array et les concat
@@ -17,7 +19,7 @@ using namespace std;
             char buffer[41];                           
             unsigned char hash[SHA_DIGEST_LENGTH];     
             SHA1(reinterpret_cast<const unsigned char*>(ss.str().c_str()), ss.str().size(), hash);
-            HtoS(hash,buffer);
+            HtoS(hash, buffer);
             return string(buffer);
         }
 

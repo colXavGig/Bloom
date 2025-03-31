@@ -6,22 +6,23 @@ ifeq ($(OS),Windows_NT)
 	FIXPATH = $(subst /,\,$1)
 else
 	detected_OS := $(shell uname -s)
-	RM = rm -rf
+	RM = rm -r
 	MKDIR = mkdir -p
 	CP = cp
 	FIXPATH = $1
 endif
 
 # Compiler settings
-root=../app
+root=./app
 build=$(root)/build
-objects=Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader.o main.o
+objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileReader.o GardenPath.o main.o
+bin := main.exe
 
 all: main.exe
 	@echo Detected OS: $(detected_OS)
-	
-	
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader.o FileBuilder.o main.o
+
+main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileReader.o FileBuilder.o GardenPath.o main.o
+
 
 	@echo "making executable...\n";
 	g++ $(build)/main.o \
@@ -32,7 +33,8 @@ main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o  FileReader
 	$(build)/filereader/FileReader.o  \
 	$(build)/filebuilder/FileBuilder.o  \
 	$(build)/hashing/Hashing.o \
-	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe 
+	$(build)/GardenPath.o \
+	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe
 
 
 
@@ -58,30 +60,39 @@ HashTree.o: $(root)/datacollection/hashTree/HashTree.cpp
 	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/datacollection/HashTree.o)
 	@echo
 
-FileWriter.o: $(call FIXPATH,$(root)/fileWriter/fileWriter.cpp)
+FileWriter.o: $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileWriter/fileWriter.cpp) -o $(call FIXPATH,$(build)/filewriter/FileWriter.o)
+	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/filewriter/FileWriter.o)
 	@echo
-	
+
 FileReader.o: $(call FIXPATH,$(root)/fileReader/component/Searcher.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/fileReader/component/Searcher.cpp) -o $(call FIXPATH,$(build)/filereader/FileReader.o)
 	@echo
+
 	
 FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp) -o $(call FIXPATH,$(build)/filebuilder/FileBuilder.o)
 	@echo
 	
+
 main.o: $(call FIXPATH,$(root)/main.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/main.cpp) -o $(call FIXPATH,$(build)/main.o)
 	@echo
 
+GardenPath.o: $(call FIXPATH, $(root)/paths/GardenPath.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH, $(root)/paths/GardenPath.cpp) -o $(call FIXPATH, $(build)/GardenPath.o)
+	@echo
 run: all
 	./main.exe
 # Clean build directory
 
 clean:
-	del /s /q build\*.o 2>nul
-	for /d %%D in $(build)\* do @rmdir /s /q "%%D" 2>nul
+	$(RM) $(call FIXPATH, $(build)/**/*.o)
+	$(RM) $(call FIXPATH, $(build)/*.o)
+	$(RM) $(call FIXPATH, *.exe)
+	#del /s /q build\*.o 2>nul
+	#for /d %%D in $(build)\* do @rmdir /s /q "%%D" 2>nul

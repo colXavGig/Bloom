@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-//#include "../garden_tags/gardenTags.h"
+//#include "../garden_tags/GardenTags.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
 
@@ -25,10 +25,9 @@ class fileWriter{
 
         void savingFolder(const FolderNode *node);
         
-    public:
 
         fileWriter(fs::path gardenlocation)/*: tag(node)*/ {
-            this->gardenpath=gardenlocation;   
+            this->gardenpath=gardenlocation;
         };
 
         void createGarden(FolderNode *current);

@@ -17,8 +17,6 @@ class HashTree{
     public:
         HashTree(FolderNode *root);
 
-        void printTree(HashNode* node, int depth = 0);
-
         void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() {

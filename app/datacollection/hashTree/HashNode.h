@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 #include <filesystem>
-#include "../../processes/Hashing.h"
+
 #include <openssl/sha.h>
 using namespace std;
 namespace fs=std::filesystem;
@@ -20,9 +20,9 @@ propriete 3:
 */
 class HashNode{
     protected:
-        string signature;
-        fs::path path;
-        string filename;    
+        string signature; 
+        string filename;   
+        fs::path path; 
         //constructor
         HashNode(const fs::path &p):path(p),filename(p.filename().string()){}
     public:

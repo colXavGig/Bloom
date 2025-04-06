@@ -1,33 +1,23 @@
 #include <iostream>
 #include <fstream>
-
-using namespace std;
+#include "../paths/GardenPath.h"
 
 struct line{
-    string buffer;
+    std::string buffer;
     int index;
 };
 
 class FileIterator {
     private:
-        ifstream *ifs; 
+        GardenPath path = GardenPath(".");
+        std::ifstream *ifs; 
         line *Line;
-        bool readline();
     public:
+        //constructor
+        FileIterator(std::string path);
+
+        //functions
         bool Next();
-        FileIterator(string path){
-            ifs = new ifstream(path);
-            if (!ifs->is_open()) {
-                cout << "Failed to open file: " << path << endl;
-                throw std::runtime_error("Failed to open file.");
-            }
-    
-            Line = new line;  
-            Line->index = 0;  
-            
-        }
-
-        string getLine();
-
+        std::string getLine();
         int getIndex();
 };

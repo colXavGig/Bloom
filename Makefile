@@ -15,13 +15,13 @@ endif
 # Compiler settings
 root=./app
 build=$(root)/build
-objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o main.o
+objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o GardenPath.o main.o
 bin := main.exe
 
 all: main.exe
 	@echo Detected OS: $(detected_OS)
 
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o main.o
+main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o FolderIterator.o CompareTree.o GardenPath.o main.o
 
 
 	@echo "making executable...\n";
@@ -31,9 +31,9 @@ main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterato
 	$(build)/datacollection/StringVector.o \
 	$(build)/filewriter/FileWriter.o  \
 	$(build)/filereader/FileIterator.o  \
-	$(build)/filebuilder/FileBuilder.o  \
+	$(build)/filereader/FolderIterator.o  \
+	$(build)/algo/compare/CompareTree.o  \
 	$(build)/hashing/Hashing.o \
-	$(build)/growth/Growth.o \
 	$(build)/GardenPath.o \
 	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe
 
@@ -70,16 +70,17 @@ FileIterator.o: $(call FIXPATH,$(root)/fileReader/FileIterator.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/fileReader/FileIterator.cpp) -o $(call FIXPATH,$(build)/filereader/FileIterator.o)
 	@echo
-	
-Growth.o: $(call FIXPATH,$(root)/growth/Growth.cpp)
+
+FolderIterator.o: $(call FIXPATH,$(root)/fileReader/FolderIterator.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/growth/Growth.cpp) -o $(call FIXPATH,$(build)/growth/Growth.o)
-	@echo	
-	
-FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp) -o $(call FIXPATH,$(build)/filebuilder/FileBuilder.o)
+	g++ -c $(call FIXPATH,$(root)/fileReader/FolderIterator.cpp) -o $(call FIXPATH,$(build)/filereader/FolderIterator.o)
 	@echo
+	
+CompareTree.o: $(call FIXPATH,$(root)/algo/compare/CompareTree.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/algo/compare/CompareTree.cpp) -o $(call FIXPATH,$(build)/algo/compare/CompareTree.o)
+	@echo
+	
 	
 
 main.o: $(call FIXPATH,$(root)/main.cpp)

@@ -28,3 +28,13 @@ fs::path GardenPath::getSeedPath() {
 fs::path GardenPath::getGrowthPath() {
     return getGardenPath() / "growth";
 }
+
+
+fs::path GardenPath::getFlowerPath(std::string signature){
+    std::string folder="",file="";
+    for(int i = 0; i<signature.size(); i++){
+        if(i < 2){ folder += signature[i]; continue; }
+        file += signature[i];
+    }   
+    return getGardenPath() / (folder+"/"+file);
+}

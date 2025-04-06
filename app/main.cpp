@@ -2,8 +2,10 @@
 #include "fileWriter/FileWriter.h"
 //#include "fileReader/component/Searcher.h"
 #include "paths/GardenPath.h"
-#include "fileReader/FileIterator.h"
-#include "growth/Growth.h"
+#include "algo/Compare/CompareTree.h"
+
+
+
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
     string cmd = (argc >= 1) ? argv[1] :/* === DEFAULT === */ "commit";
@@ -23,17 +25,25 @@ int main(int argc, char** argv){
             //   "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\ReaderTester");
     }  else if (cmd == "comp"){
         cout<<"comparing"<<"\n";
-        
-        FileIterator *it1 = new FileIterator("./app/testing/blob.txt");
-        FileIterator *it2 = new FileIterator("./app/testing/blob2.txt");
-        Growth g;
-        while(it1->Next() | it2->Next()){
-           g.compare(it1->getLine(),it1->getIndex(),it2->getLine(),it2->getIndex());
-        }
-        g.printChange();
+
+        CompareTree comp;
+        //remplacer ca par des commits
+        comp.compareFolder("80c0b919e881434f1e18fc097bc79033014e31eb.txt","0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt");
+        comp.printChange();
+    cout<<"succes";
+    } else if (cmd == "growback"){
+        cout<<"comparing"<<"\n";
+
+        CompareTree comp;
+        //remplacer ca par des commits
+        comp.compareFolder("80c0b919e881434f1e18fc097bc79033014e31eb.txt","0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt");
+        comp.printChange();
+    cout<<"succes";
     }
 
     cout<<"succes";
     //getchar();
 
 }
+
+

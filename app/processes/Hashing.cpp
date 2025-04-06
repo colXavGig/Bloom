@@ -66,5 +66,15 @@ int fileHash(const char *filename,char* buffer){
     return 1;
 }
 
+int tagHashing(GardenTag *tag, unsigned char *hash) {
+  SHA_CTX ctx;
+  string h = tag->getRootHash();
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, &(tag->timestamp), sizeof(tag->timestamp));
+  SHA1_Update(&ctx, &h, sizeof(h));
+  SHA1_Update(&ctx, &tag->message, sizeof(tag->message));
+  SHA1_Final(*hash, &ctx);
+}
+
 
 

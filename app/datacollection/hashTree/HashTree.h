@@ -2,7 +2,6 @@
 #include <iostream>
 #include "HashNode.h"
 #include "../../processes/Hashing.h"
-#include "../../garden_tags/GardenTags.h"
 using namespace std;
 namespace  fs =  std::filesystem;
 /**
@@ -14,7 +13,6 @@ namespace  fs =  std::filesystem;
 class HashTree {
     public:
         HashTree(FolderNode *root);
-        HashTree(GardenTags *tag);
         void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() {
@@ -24,5 +22,8 @@ class HashTree {
     private:
         FolderNode *root;    
         void createProjectTree(FolderNode *parentNode);
+        /**
+         * permet de recreer un HashTree a partir du .garden pas concret mais experimental
+         */
         void createGardenTree(FolderNode *parentNode);
  };

@@ -35,9 +35,7 @@
         parentNode->setSignature();
     }
 
-     /*
-    permet de recreer un HashTree a partir du .garden pas concret mais experimental
-    */
+
     void HashTree::createGardenTree(FolderNode *parentNode){
 
 

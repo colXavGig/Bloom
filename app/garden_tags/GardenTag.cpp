@@ -6,31 +6,35 @@ using namespace std;
 //setters
 string GardenTag::getHash() {
 
-    return signature;
+    return value->signature;
 }
 
 string GardenTag::getRootHash() {
-    return this->root->getSignature();
+    return value->root->signature;
 }
 string GardenTag::getMessage() {
-  return this->message;
+  return value->message;
+}
+
+GardenTag_s *GardenTag::getStructValue() {
+  return value;
 }
 
 /////////////////////////////////////////////
 ///                PRIVATE                ///
 /////////////////////////////////////////////
 
-void GardenTag::setRoot(HashNode *root) {
-  this->root = root;
+void GardenTag::setRoot(FolderNode *root) {
+  value->root = root->getStructValue();
 }
 
 void GardenTag::generateSignature() {
   unsigned char hash[HASH_SIZE];
-    tagHashing(this, &hash);
+    tagHashing(value, &hash);
     string hashStr = to_string(hash[0]);
     for(int i=1; i < HASH_SIZE; i++) {
       hashStr += to_string(hash[i]);
     }
-    this->signature = hashStr;
+    value->signature = hashStr.data();
 }
 

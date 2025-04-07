@@ -66,9 +66,9 @@ int fileHash(const char *filename,char* buffer){
     return 1;
 }
 
-int tagHashing(GardenTag *tag, unsigned char *hash) {
+int tagHashing(GardenTag_s *tag, unsigned char (*hash)[HASH_SIZE]) {
   SHA_CTX ctx;
-  string h = tag->getRootHash();
+  string h = tag->root->signature;
   SHA1_Init(&ctx);
   SHA1_Update(&ctx, &(tag->timestamp), sizeof(tag->timestamp));
   SHA1_Update(&ctx, &h, sizeof(h));

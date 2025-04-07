@@ -65,36 +65,15 @@ void fileWriter::savingFolder(const FolderNode *node){
 }
 
 void fileWriter::savingGardenTag(HashTree *tree, string tag_msg){
-    int i = 0;\
-    puts("test");
-
-    printf("%d\n",i++); //0
     GardenTag tag = GardenTag(tree, tag_msg);
-    printf("%d\n",i++); //1
     string folderPath, filePath;
-    printf("%d\n",i++);//2
     createFileStructure(tag.getHash(), folderPath, filePath);
-    printf("%d\n",i++);//3
     fs::path targetPath = this->gardenpath->getTagPath();
-    printf("%s\n",targetPath.string().c_str());
-    if (fs::create_directory(targetPath)) {
-        puts("created");
-    } else {
-      puts("could not create directory");
-    }
-    printf("%d\n",i++);//4
+    fs::create_directory(targetPath);
     targetPath/= folderPath;
-    printf("%s\n",targetPath.string().c_str());
-    if (fs::create_directory(targetPath)) {
-        puts("created");
-    } else {
-      puts("could not create directory");
-    }
-    printf("%d\n",i++);
+    fs::create_directory(targetPath);
     targetPath /= filePath;
-    printf("%d\n",i++);
     std::ofstream outFile(targetPath);
-    printf("%d\n",i++);
 
     outFile << "[MSG] " << tag.getMessage() << std::endl;
     outFile << "[TREE] " << tag.getRootHash() << std::endl;

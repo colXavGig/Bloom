@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
  * Env that must be setup is gardenpath(database) through a json
  * it takes the node checks the states and create the appropriate file.
 */
-class fileWriter{
+class fileWriter {
 public:
     /**
      * constructor of the file writer with initialize all the members
@@ -31,6 +31,7 @@ public:
     void writeToFile(HashTree *tree, string tag_msg);;
 
 private:
+    /** Collection of path for the .garden/ folder */
     GardenPath *gardenpath;
 
     /**
@@ -41,6 +42,11 @@ private:
     void createFileStructure(string s,string &folder,string &file);
     void savingFile(const FileNode *node); //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
     void savingFolder(const FolderNode *node);
+    /**
+     * Save the GardenTag into the filesystem
+     * @param tree A pointer to the HashTrww the tag should point to
+     * @param tag_msg The message that describe the commit
+     */
     void savingGardenTag(HashTree *tree, string tag_msg);
 
 };

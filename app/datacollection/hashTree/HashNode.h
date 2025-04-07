@@ -9,75 +9,185 @@
 #include <openssl/sha.h>
 using namespace std;
 namespace fs=std::filesystem;
-/*
-node qui hash son contenue dependament de son type (dir/fichier)
-elle hash les lignes des fichier pour ensuite les concat et hash le concat
-if it's a folder it will hash concatenate the hash of the files it contains and hash it.
+#define FILENODE 1;
+#define FOLDERNODE 2;
 
-1 responsibilities assurer que fichiers et folder peuvent etre adequatement represente:
-Propriete 1: le nom du dir/fichier
-Propriete 2: le hash du dir/fichier
-propriete 3:
-*/
+//extern "C" {
+typedef union HashNode_content HashNode_content;
+
+typedef struct HashNode_s {
+    char *signature;
+    char *filename;
+    char *path;
+    int type;
+    HashNode_content *content;
+} HashNode_s;
+
+typedef struct {
+    int type;
+    HashNode_s *signature_node;
+} FolderNode_content;
+
+union HashNode_content {
+    char *file_content;
+    FolderNode_content *folder_contents;
+};
+//}
+
+/**
+ * node qui hash son contenue dependament de son type (dir/fichier)
+ * elle hash les lignes des fichier pour ensuite les concat et hash le concat
+ * if it's a folder it will hash concatenate the hash of the files it contains and hash it.
+ *
+ * 1 responsibilities assurer que fichiers et folder peuvent etre adequatement represente:
+ * Propriete 1: le nom du dir/fichier
+ * Propriete 2: le hash du dir/fichier
+ * propriete 3:
+ */
 class HashNode {
     protected:
-        string signature; 
-        string filename;   
-        fs::path path; 
-        //constructor
-        HashNode(const fs::path &p):path(p),filename(p.filename().string()){}
+        /** Structural value of the HashNode */
+        HashNode_s *value;
+        // string signature;
+        // string filename;
+        // fs::path path;
 
-        HashNode(const fs::path path,const string filename,const string signature)
-        :path(path),filename(filename),signature(signature){}
+        /**
+         * Construct an HashNode with a pre-generated value
+         * @param value The structural value of the HashNode
+         */
+        HashNode(HashNode_s *value) {
+            this->value = value;
+        }
+
+        /**
+         * Construct a HashNode with its path and the subtype of the HashNode
+         * @param p The path to the node
+         * @param type The subtype of the HashNode, FOLDERNODE being a FolderNode
+         *      and FILENODE representing a FileNode
+         */
+        HashNode(const fs::path &p, const int type) {
+            init(p, p.filename().string(), type);
+        }
+
+        /**
+         * Construct a HashNode with its path, the filename, the signature and the subtype of the HashNode
+         * @param path The path of the node
+         * @param filename The filename of the node
+         * @param signature The pre-hashed signature of the node
+         * @param type The subtype of the HashNode, FOLDERNODE being a FolderNode
+         *      and FILENODE representing a FileNode
+         */
+        HashNode(const fs::path path, const string filename, const string signature, const int type) {
+            init(path, filename, type);
+            value->signature = (char *)signature.data();
+        }
+
+        /**
+         * Initiate the value of the node
+         * @param path The path of the HashNode
+         * @param filename The filename of the HashNode
+         * @param type The subtype of the HashNode, FOLDERNODE being a FolderNode
+         *      and FILENODE representing a FileNode
+         */
+        virtual  void init(const fs::path &path,const string filename,int type);
+
+        /**
+         * Generate and set the hashed signature of the node.
+         * Implemented by the subtype
+         */
+        virtual void setSignature() = 0;
+        virtual void setContent(HashNode_content *content) =  0;
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     public:
-        //setters
-        virtual void setSignature()=0;
-
+        /**
+         * Set the path of the HashNode to the provided value
+         * @param path The new value for the path
+         */
         void setPath(fs::path path){
-            this->path=path;
-        }       
-        //getters
+            this->value->path = path.string().data();
+        }
+
+        /**
+         * Ge the hashed signature of the HashNode
+         * @return a string representing the hashed signature of the HashNode
+         */
         string getSignature() const{
-            return this->signature;
+            return this->value->signature;
         }
         fs::path getPath() const {
-            return this->path;
+            return this->value->path;
         }
         string getFileName() const{
-            return this->filename;
+            return this->value->filename;
         }
+
+        /**
+         * Get the structural data of the HashNode
+         * @return a struct representing the value of the HashNode
+         */
+        HashNode_s *getStructValue();
+
  };
 
 
- class FileNode :public HashNode{
+class FileNode : public HashNode{
     public:
-    void setSignature();
-    //constructeur
-    FileNode(const fs::path &p):HashNode(p){
+
+    /**
+     * Construct a FileNode with a preconstructed value
+     * @param value The value that represent the FileNode
+     */
+    FileNode(HashNode_s *value): HashNode(value) {
+    }
+
+    /**
+     * Construct a FileNode with a path to the file
+     * @param p The path to the file which the FileNode need to represent
+     */
+    FileNode(const fs::path &p): HashNode(p, 1) {
         setSignature();
     }
 
-    //constructeur de garden--> ne hash rien
+    /**
+     * Conmstruct that does not hash its signature and assigne the one provided to hime
+     * @param path The path to the file which the FileNode need to represent
+     * @param filename The name of te file which the node represent
+     * @param signature The signature of the FileNode which is hashed string of its content
+     */
     FileNode(const fs::path &path,const string filename,const string signature)
-    :HashNode(path,filename,signature){}
+    :HashNode(path, filename, signature, 1) {}
+
+    void setContent(char *content);
+    void setContent(HashNode_content *content) override;
+
+
+    /** Implicit conversion to HashNode_s pointer */
+    operator HashNode_s *() const {
+        return value;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+
+    private:
+        void setSignature() override;
  };
 
 
- class FolderNode :public HashNode{
-    private:
-        //afin d'eviter le dynamic casting je fais deux vector 
-        //un pour files et l'autre pour fichier
-        vector<FileNode *> fileNodes;
-        vector<FolderNode *> folderNodes;
-        string fullhash();
+class FolderNode :public HashNode{
+
     public:
-        void setSignature();
+        void setSignature() override;
+
+        FolderNode(HashNode_s *value): HashNode(value) {}
         //constructeur
-        FolderNode(const fs::path &p):HashNode(p){ }
+        FolderNode(const fs::path &p):HashNode(p, 2) {}
 
         //constructeur de garden--> ne hash rien
-        FolderNode(const fs::path &path,const string &filename,const string &signature)
-        :HashNode(path,filename,signature){ }
+        FolderNode(const fs::path &path,const string &filename,const string &signature):
+            HashNode(path, filename, signature, 2) {}
 
 
         vector<FileNode *> getFiles()const {
@@ -94,4 +204,16 @@ class HashNode {
         void addfolder(FolderNode *node){
             folderNodes.push_back(node);
         }
+
+    private:
+        //afin d'eviter le dynamic casting je fais deux vector
+        //un pour files et l'autre pour fichier
+        vector<FileNode *> fileNodes;
+
+        vector<FolderNode *> folderNodes;
+
+        /** Prends les hash de chaques node dans le node_array et les concat */
+        string fullhash();
+        void setContent(FolderNode_content *content);
+        void setContent(HashNode_content *content) override;
  };

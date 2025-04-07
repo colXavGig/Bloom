@@ -8,18 +8,14 @@ using namespace std;
 //setters
 string GardenTag::getHash() {
 
-    return value->signature;
+    return signature;
 }
 
 string GardenTag::getRootHash() {
-    return value->root->signature;
+    return this->root->getSignature();
 }
 string GardenTag::getMessage() {
-  return value->message;
-}
-
-GardenTag_s *GardenTag::getStructValue() {
-  return value;
+  return this->message;
 }
 
 /////////////////////////////////////////////
@@ -27,16 +23,16 @@ GardenTag_s *GardenTag::getStructValue() {
 /////////////////////////////////////////////
 
 void GardenTag::setRoot(FolderNode *root) {
-  value->root = root->getStructValue();
+  this->root = root;
 }
 
 void GardenTag::generateSignature() {
   unsigned char hash[HASH_SIZE];
-    tagHashing(value, &hash);
+    tagHashing(this, &hash);
     string hashStr = to_string(hash[0]);
     for(int i=1; i < HASH_SIZE; i++) {
       hashStr += to_string(hash[i]);
     }
-    value->signature = hashStr.data();
+    this->signature = hashStr;
 }
 

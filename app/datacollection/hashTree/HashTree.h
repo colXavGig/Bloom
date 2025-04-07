@@ -22,8 +22,5 @@ class HashTree {
     private:
         FolderNode *root;    
         void createProjectTree(FolderNode *parentNode);
-        /**
-         * permet de recreer un HashTree a partir du .garden pas concret mais experimental
-         */
         void createGardenTree(FolderNode *parentNode);
  };

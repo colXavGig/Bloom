@@ -2,16 +2,8 @@
 #include "../datacollection/hashTree/HashTree.h"
 #include <iostream>
 #include <string>
-
+class HashTree;
 using namespace std;
-namespace  fs =  std::filesystem;
-
-typedef struct GardenTag_s {
-    char *message;
-    char *signature;
-    long long timestamp;
-    HashNode_s *root;
-} GardenTag_s;
 
 /**
  * class that holds the data to point to a commit of an Hashtree
@@ -19,16 +11,19 @@ typedef struct GardenTag_s {
 class GardenTag{
 
 public:
+    string message;
+    time_t timestamp;
+
     /**
      * Construct a GardenTag with the specified roo
      * @param tree the tree that the tag should point to
      * @param msg the message recorded by the user to explain the changed in the repo
      */
-    GardenTag(HashTree *tree, string msg)
+    GardenTag(HashTree *tree, string msg):root()
     {
         setRoot(tree->getRoot());
-        value->timestamp = time(NULL);
-        value->message = msg.data();
+        timestamp = time(NULL);
+        this->message = msg;
         generateSignature();
     };
 
@@ -45,19 +40,14 @@ public:
 
     string getMessage();
     FolderNode* getRoot(){
-        return new FolderNode(value->root);
-    }
-
-    GardenTag_s *getStructValue();
-
-    operator GardenTag_s *() const {
-        return  value;
+        return this->root;
     }
 
 
     private:
-        GardenTag_s *value;
+        FolderNode* root;
+        string signature;
 
-        void setRoot(FolderNode *root);
+        void setRoot(HashNode *root);
         void generateSignature();
 };

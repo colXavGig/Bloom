@@ -5,12 +5,12 @@
 #include "fileReader/FileIterator.h"
 #include "growth/Growth.h"
 
-void commit(fileWriter paths, char** arr, int size);
+void commit(GardenPath *paths, char** arr, int size);
 //void search(char** arr, int size);
 
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
-    string cmd = (argc >= 1) ? argv[1] :/* === DEFAULT === */ "commit";
+    string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
     if (cmd == "commit")
     {
         commit(&paths, argv +2, argc -2);
@@ -29,17 +29,17 @@ int main(int argc, char** argv){
         g.printChange();
     }
 
+
     cout<<"succes";
     //getchar();
 }
 
 void commit(GardenPath *paths, char** arr, int size)
 {
-    string tag_msg = (arr[0] == "-m") ? arr[1] : "";
+    string tag_msg = (arr[0] == "-m") ? arr[1] : "<EMPTY>";
 
     FolderNode *root = new FolderNode("./app/testing");
     HashTree HTree =  HashTree(root);
-
     fileWriter fw = fileWriter(paths);
     fw.writeToFile(&HTree, tag_msg);
 }

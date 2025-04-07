@@ -1,4 +1,6 @@
 #include "HashTree.h"
+
+#include "../../processes/Hashing.h"
     /*
     Constructeur prends une directory
     et copy le filesystem a partir.
@@ -7,9 +9,10 @@
         createProjectTree(root);  
     }
 
-    HashTree::HashTree(GardenTags *tag):root(tag->getRoot()) {
-        createGardenTree(root);
-    }
+    // HashTree::HashTree(GardenTags *tag):root(tag->getRoot()) {
+    //     createGardenTree(root);
+    // }
+    
     /*
     fonction Recursive, creer le tree et set les information importantes
     pour faire la sauvegarde. 

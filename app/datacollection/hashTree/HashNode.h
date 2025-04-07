@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -205,7 +206,7 @@ class FolderNode :public HashNode{
         }
 
     private:
-        //afin d'eviter le dynamic casting je fais deux vector 
+        //afin d'eviter le dynamic casting je fais deux vector
         //un pour files et l'autre pour fichier
         vector<FileNode *> fileNodes;
 

@@ -1,4 +1,6 @@
-#include "GardenTags.h"
+#include "GardenTag.h"
+
+#include "../processes/tag_hashing.cpp"
 using namespace std;
 
 

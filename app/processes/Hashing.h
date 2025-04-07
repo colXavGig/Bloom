@@ -15,4 +15,3 @@ namespace fs = std::filesystem;
 int getline(FILE* fptr,unsigned char *hash);
 int HtoS(const unsigned char* hash,char* buffer);
 int fileHash(const char *filename,char* buffer);
-int tagHashing(GardenTag_s *tag, unsigned char (*hash)[HASH_SIZE]);

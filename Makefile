@@ -21,7 +21,7 @@ bin := main.exe
 all: main.exe
 	@echo Detected OS: $(detected_OS)
 
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o main.o
+main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o GardenTag.o main.o
 
 
 	@echo "making executable...\n";
@@ -31,12 +31,14 @@ main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterato
 	$(build)/datacollection/StringVector.o \
 	$(build)/filewriter/FileWriter.o  \
 	$(build)/filereader/FileIterator.o  \
-	$(build)/filebuilder/FileBuilder.o  \
 	$(build)/hashing/Hashing.o \
 	$(build)/growth/Growth.o \
 	$(build)/GardenPath.o \
+	$(build)/GardenTag.o \
 	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe
 
+# TODO: delete if not used
+#	$(build)/filebuilder/FileBuilder.o  \
 
 
 Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
@@ -76,11 +78,15 @@ Growth.o: $(call FIXPATH,$(root)/growth/Growth.cpp)
 	g++ -c $(call FIXPATH,$(root)/growth/Growth.cpp) -o $(call FIXPATH,$(build)/growth/Growth.o)
 	@echo	
 	
-FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp) -o $(call FIXPATH,$(build)/filebuilder/FileBuilder.o)
-	@echo
+#FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
+#	@echo "making $@..."
+#	g++ -c $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp) -o $(call FIXPATH,$(build)/filebuilder/FileBuilder.o)
+#	@echo
 	
+GardenTag.o: $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp) -o $(call FIXPATH,$(build)/GardenTag.o)
+	@echo
 
 main.o: $(call FIXPATH,$(root)/main.cpp)
 	@echo "making $@..."

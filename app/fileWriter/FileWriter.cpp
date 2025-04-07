@@ -1,6 +1,6 @@
 #include "FileWriter.h"
 
-#include "../garden_tags/GardenTags.h"
+#include "../garden_tags/GardenTag.h"
 
 void fileWriter::writeToFile(HashTree *tree, string commit_msg) {
     this->createGarden(tree->getRoot());
@@ -42,6 +42,7 @@ void fileWriter::savingFile(const FileNode *node){
 //     file    sadfsadff   file2.txt
 //     Folder  asdfhsdfs   subdir
 void fileWriter::savingFolder(const FolderNode *node){
+
     string folder,file;
     createFileStructure(node->getSignature(),folder,file);
 
@@ -64,13 +65,36 @@ void fileWriter::savingFolder(const FolderNode *node){
 }
 
 void fileWriter::savingGardenTag(HashTree *tree, string tag_msg){
+    int i = 0;\
+    puts("test");
+
+    printf("%d\n",i++); //0
     GardenTag tag = GardenTag(tree, tag_msg);
+    printf("%d\n",i++); //1
     string folderPath, filePath;
+    printf("%d\n",i++);//2
     createFileStructure(tag.getHash(), folderPath, filePath);
-    fs::path targetPath = this->gardenpath->getTagPath() / folderPath;
-    fs::create_directory(targetPath);
+    printf("%d\n",i++);//3
+    fs::path targetPath = this->gardenpath->getTagPath();
+    printf("%s\n",targetPath.string().c_str());
+    if (fs::create_directory(targetPath)) {
+        puts("created");
+    } else {
+      puts("could not create directory");
+    }
+    printf("%d\n",i++);//4
+    targetPath/= folderPath;
+    printf("%s\n",targetPath.string().c_str());
+    if (fs::create_directory(targetPath)) {
+        puts("created");
+    } else {
+      puts("could not create directory");
+    }
+    printf("%d\n",i++);
     targetPath /= filePath;
+    printf("%d\n",i++);
     std::ofstream outFile(targetPath);
+    printf("%d\n",i++);
 
     outFile << "[MSG] " << tag.getMessage() << std::endl;
     outFile << "[TREE] " << tag.getRootHash() << std::endl;

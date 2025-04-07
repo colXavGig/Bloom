@@ -6,7 +6,7 @@
     et copy le filesystem a partir.
     */
     HashTree::HashTree(FolderNode *r):root(r) {
-        createProjectTree(root);  
+        createProjectTree(root);
     }
 
     // HashTree::HashTree(GardenTags *tag):root(tag->getRoot()) {
@@ -20,8 +20,9 @@
     void HashTree::createProjectTree(FolderNode *parentNode){
         
         cout<<"creating a folder: "<<parentNode->getFileName()<<"\n";
-
+        cout<<"path: "<<parentNode->getPath()<<"\n";
         for(const auto &entry: fs::directory_iterator(parentNode->getPath())){
+        puts("ttttttttttttttttttttttttttttttttttttttttt");
             if(entry.path().filename() ==".garden"){continue;}// faut creer une classe ignore pour ignorer certain folder
 
             if(fs::is_regular_file(entry)){

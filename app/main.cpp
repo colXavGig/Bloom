@@ -5,16 +5,21 @@
 #include "fileReader/FileIterator.h"
 #include "growth/Growth.h"
 
+#define LOGGER_STATUS LOGGER_ACTIVE
+#include "debugging.h"
+
+
 void commit(GardenPath *paths, char** arr, int size);
-//void search(char** arr, int size);
+//void search(char** arr, int size); // TODO: remove if not relevant @Will
 
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
-    if (cmd == "commit")
-    {
+    LOG(("Command : " + cmd).c_str());
+    if (cmd == "commit") {
         commit(&paths, argv +2, argc -2);
-    } /*else if (cmd == "search")
+
+    } /*else if (cmd == "search") // TODO: remove if not relevant @Will
     {
         search(argv+2, argc-2);
     }*/ else if (cmd == "comp"){
@@ -30,17 +35,23 @@ int main(int argc, char** argv){
     }
 
 
-    cout<<"succes";
+    LOG("success");
     //getchar();
 }
 
-void commit(GardenPath *paths, char** arr, int size)
-{
+void commit(GardenPath *paths, char** arr, int size) {
     string tag_msg = (arr[0] == "-m") ? arr[1] : "<EMPTY>";
+    LOG(("Tag message: \"" + tag_msg + "\"!").c_str());
 
     FolderNode *root = new FolderNode("./app/testing");
+    LOG("FolderNode created!");
+
     HashTree HTree =  HashTree(root);
+    LOG("HashTree created!");
+
     fileWriter fw = fileWriter(paths);
+    LOG("FileWriter created!");
+
     fw.writeToFile(&HTree, tag_msg);
 }
 

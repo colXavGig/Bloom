@@ -1,4 +1,5 @@
 #include "HashNode.h"
+
 #include "../../processes/Hashing.h"
 
 using namespace std;

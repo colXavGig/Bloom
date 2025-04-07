@@ -9,8 +9,8 @@
 #include <openssl/sha.h>
 using namespace std;
 namespace fs=std::filesystem;
-#define FILENODE 1;
-#define FOLDERNODE 2;
+#define FILENODE 1
+#define FOLDERNODE 2
 
 //extern "C" {
 typedef union HashNode_content HashNode_content;
@@ -147,7 +147,7 @@ class FileNode : public HashNode{
      * Construct a FileNode with a path to the file
      * @param p The path to the file which the FileNode need to represent
      */
-    FileNode(const fs::path &p): HashNode(p, 1) {
+    FileNode(const fs::path &p): HashNode(p, FILENODE) {
         setSignature();
     }
 
@@ -158,7 +158,7 @@ class FileNode : public HashNode{
      * @param signature The signature of the FileNode which is hashed string of its content
      */
     FileNode(const fs::path &path,const string filename,const string signature)
-    :HashNode(path, filename, signature, 1) {}
+    :HashNode(path, filename, signature, FILENODE) {}
 
     void setContent(char *content);
     void setContent(HashNode_content *content) override;
@@ -183,11 +183,11 @@ class FolderNode :public HashNode{
 
         FolderNode(HashNode_s *value): HashNode(value) {}
         //constructeur
-        FolderNode(const fs::path &p):HashNode(p, 2) {}
+        FolderNode(const fs::path &p):HashNode(p, FOLDERNODE) {}
 
         //constructeur de garden--> ne hash rien
         FolderNode(const fs::path &path,const string &filename,const string &signature):
-            HashNode(path, filename, signature, 2) {}
+            HashNode(path, filename, signature, FOLDERNODE) {}
 
 
         vector<FileNode *> getFiles()const {

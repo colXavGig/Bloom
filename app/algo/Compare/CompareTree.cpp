@@ -10,7 +10,7 @@ void CompareTree::printChange(){
 }
 
 
-void CompareTree::compareFolder(string rootPath1,string rootPath2){
+void CompareTree::compareFolder(std::string rootPath1,std::string rootPath2){
     //variable 
     FolderIterator *folderIt1 = new FolderIterator(rootPath1);//jvais faire en sorte que a linitialisation next se fait call
     FolderIterator *folderIt2 = new FolderIterator(rootPath2);

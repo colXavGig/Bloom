@@ -25,8 +25,8 @@ fs::path GardenPath::getSeedPath() {
     return getGardenPath() / "seeds";
 }
 
-fs::path GardenPath::getGrowthPath() {
-    return getGardenPath() / "growth";
+fs::path GardenPath::getTagPath() {
+    return getGardenPath() / "tag";
 }
 
 

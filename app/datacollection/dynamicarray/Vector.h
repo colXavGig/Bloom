@@ -11,12 +11,12 @@ capacite est le nombre maximal d'unite possible
 
 quand size est egal a capacite capacite augmente de 1.5x
 */
-struct StringVector{
+typedef struct {
     unsigned char* data;
     int size;
     int capacity;
-}; 
+} StringVector; 
 
-int init(StringVector* v);   
-int push_back(StringVector* v, unsigned char* data);
+int stringvector_init(StringVector *v);   
+int push_back(StringVector *v, unsigned char *data);
 

@@ -16,8 +16,12 @@ class GardenPath {
         fs::path getRoot();
         fs::path getGardenPath();
         fs::path getSeedPath();
+<<<<<<< HEAD
         fs::path getGrowthPath();
         fs::path getFlowerPath(std::string signature);
+=======
+        fs::path getTagPath();
+>>>>>>> 57c66847cdbd5f591c25e3e78601257cc47bbdde
 };
 
 

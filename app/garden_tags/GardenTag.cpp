@@ -1,28 +1,36 @@
 #include "GardenTags.h"
 using namespace std;
 
-class gardenTags{
-    private:
-        HashNode* roots;
-    public:
-        string note;
 
-        gardenTags(HashNode* roots){
-            setRoot(roots);
-            setNote();
-        };
         
-    //setters
-    void setRoot(HashNode* root){
-        roots=root;
+//setters
+string GardenTag::getHash() {
+
+    return signature;
+}
+
+string GardenTag::getRootHash() {
+    return this->root->getSignature();
+}
+string GardenTag::getMessage() {
+  return this->message;
+}
+
+/////////////////////////////////////////////
+///                PRIVATE                ///
+/////////////////////////////////////////////
+
+void GardenTag::setRoot(HashNode *root) {
+  this->root = root;
+}
+
+void GardenTag::generateSignature() {
+  unsigned char hash[HASH_SIZE];
+    tagHashing(this, &hash);
+    string hashStr = to_string(hash[0]);
+    for(int i=1; i < HASH_SIZE; i++) {
+      hashStr += to_string(hash[i]);
     }
-    void setNote(){
-        getline(cin,this->note); 
-    }
-    ostream& operator<<(std::ostream& os){
-        cout<<"[root] "<<this->roots->getSignature()<<"\n"<<
-             "[message] "<<this->note;
-        return os;
-    }
-};
+    this->signature = hashStr;
+}
 

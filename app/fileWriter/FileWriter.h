@@ -1,36 +1,47 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-//#include "../garden_tags/GardenTags.h"
+#include "../paths/GardenPath.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
+
 
 using namespace std;
 namespace fs = std::filesystem;
 
-/*
-    Env that must be setup is gardenpath(database) through a json
-    it takes the node checks the states and create the appropriate file.
+/**
+ * Env that must be setup is gardenpath(database) through a json
+ * it takes the node checks the states and create the appropriate file.
 */
 class fileWriter{
-    public:
-        //HashNode* node;
-        fs::path gardenpath;
-        
-        //gardenTags tag;
-        void createFileStructure(string s,string &folder,string &file);
+public:
+    /**
+     * constructor of the file writer with initialize all the members
+     * @param paths path where .garden is located. Typically the root of the project
+     */
+    fileWriter(GardenPath *paths)/*: tag(node)*/ {
+            this->gardenpath = paths;
+        }
 
-        void savingFile(const FileNode *node);
-        //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
+    /**
+     * Write an HashTree into the .garden/ folder of the repo
+     * @param tree representing the current repo state
+     * @param commit_msg message to keep in the GardenTag
+     */
+    void writeToFile(HashTree *tree, string tag_msg);;
 
-        void savingFolder(const FolderNode *node);
-        
+private:
+    GardenPath *gardenpath;
 
-        fileWriter(fs::path gardenlocation)/*: tag(node)*/ {
-            this->gardenpath=gardenlocation;
-        };
-
-        void createGarden(FolderNode *current);
+    /**
+     * create the entry in the .garden/ for the current node
+     * @param current the node to add into .garden/
+     */
+    void createGarden(FolderNode *current);
+    void createFileStructure(string s,string &folder,string &file);
+    void savingFile(const FileNode *node); //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
+    void savingFolder(const FolderNode *node);
+    void savingGardenTag(HashTree *tree, string tag_msg);
 
 };
 

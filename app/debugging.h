@@ -1,5 +1,3 @@
-#pragma once
-
 #define LOGGER_ACTIVE 1
 #define LOGGER_INACTIVE 0
 
@@ -13,7 +11,7 @@
 #endif
 
 // Remove previous defintion
-#undef LOG(...)
+#undef LOG
 #if LOGGER_STATUS == LOGGER_ACTIVE
     /** Logger active - will print line into the console */
     #define LOG(...) puts(__VA_ARGS__)

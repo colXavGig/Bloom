@@ -4,12 +4,9 @@
 #include <string>
 #include <time.h>
 #include <openssl/sha.h>
-#include <openssl/evp.h>
 #include "../datacollection/dynamicarray/Vector.h"
-#include "../garden_tags/GardenTag.h"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 
 int getline(FILE* fptr,unsigned char *hash);

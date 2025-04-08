@@ -1,6 +1,11 @@
 #pragma once
+
 #include <iostream>
+
 #include "HashNode.h"
+#include "../../garden_tags/GardenTag_struct.h"
+
+
 
 using namespace std;
 namespace  fs =  std::filesystem;
@@ -16,11 +21,14 @@ class HashTree {
         void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() const {
-            return this->root;
+            return new FolderNode(root);
         }
 
     private:
-        FolderNode *root;    
+        HashNode_s *root;
         void createProjectTree(FolderNode *parentNode);
-        void createGardenTree(FolderNode *parentNode);
+        /**
+         * permet de recreer un HashTree a partir du .garden pas concret mais experimental
+         */
+        void createGardenTree(GardenTag_s *parentNode);
  };

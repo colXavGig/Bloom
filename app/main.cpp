@@ -1,24 +1,24 @@
 #include "datacollection/hashTree/HashTree.h"
 #include "fileWriter/FileWriter.h"
-//#include "fileReader/component/Searcher.h"
 #include "paths/GardenPath.h"
 #include "fileReader/FileIterator.h"
 #include "growth/Growth.h"
 
+#define LOGGER_STATUS LOGGER_INACTIVE
+#include "debugging.h"
+
+
 void commit(GardenPath *paths, char** arr, int size);
-//void search(char** arr, int size);
 
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
-    if (cmd == "commit")
-    {
+    LOG(("Command : " + cmd).c_str());
+    if (cmd == "commit") {
         commit(&paths, argv +2, argc -2);
-    } /*else if (cmd == "search")
-    {
-        search(argv+2, argc-2);
-    }*/ else if (cmd == "comp"){
-        cout<<"comparing"<<"\n";
+
+    } else if (cmd == "comp"){
+
 
         FileIterator *it1 = new FileIterator("./app/testing/blob.txt");
         FileIterator *it2 = new FileIterator("./app/testing/blob2.txt");
@@ -30,25 +30,23 @@ int main(int argc, char** argv){
     }
 
 
-    cout<<"succes";
+    LOG("success");
     //getchar();
 }
 
-void commit(GardenPath *paths, char** arr, int size)
-{
+void commit(GardenPath *paths, char** arr, int size) {
     string tag_msg = (arr[0] == "-m") ? arr[1] : "<EMPTY>";
+    LOG(("Tag message: \"" + tag_msg + "\"!").c_str());
 
     FolderNode *root = new FolderNode("./app/testing");
-    HashTree HTree =  HashTree(root);
-    fileWriter fw = fileWriter(paths);
-    fw.writeToFile(&HTree, tag_msg);
-}
+    LOG("FolderNode created!");
 
-/*
-void search(char** arr, int size)
-{
-    Searcher s;
-    s.rebuild("C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\.garden\\seeds\\2f\\a2f95fb5096f1c44b0a791b5d1c157fa5e614b.txt",
-        "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\ReaderTester");
+    HashTree HTree =  HashTree(root);
+    LOG("HashTree created!");
+
+    fileWriter fw = fileWriter(paths);
+    LOG("FileWriter created!");
+
+    fw.writeToFile(&HTree, tag_msg);
+    LOG("HashTree written!");
 }
-*/

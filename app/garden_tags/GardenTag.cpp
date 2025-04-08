@@ -1,6 +1,10 @@
 #include "GardenTag.h"
 
 #include "../processes/tag_hashing.cpp"
+
+#define LOGGER_STATUS LOGGER_INACTIVE
+#include "../debugging.h"
+
 using namespace std;
 
 
@@ -8,14 +12,22 @@ using namespace std;
 //setters
 string GardenTag::getHash() {
 
-    return signature;
+    return value->signature;
 }
 
 string GardenTag::getRootHash() {
-    return this->root->getSignature();
+    return value->root->signature;
 }
 string GardenTag::getMessage() {
-  return this->message;
+  return value->message;
+}
+
+string GardenTag::getTimestamp() {
+  return ctime(&value->timestamp);
+}
+
+GardenTag_s *GardenTag::getStructValue() {
+  return value;
 }
 
 /////////////////////////////////////////////
@@ -23,16 +35,26 @@ string GardenTag::getMessage() {
 /////////////////////////////////////////////
 
 void GardenTag::setRoot(FolderNode *root) {
-  this->root = root;
+  LOG("Setting root...");
+  value->root = root->getStructValue();
 }
 
 void GardenTag::generateSignature() {
-  unsigned char hash[HASH_SIZE];
-    tagHashing(this, &hash);
-    string hashStr = to_string(hash[0]);
-    for(int i=1; i < HASH_SIZE; i++) {
-      hashStr += to_string(hash[i]);
-    }
-    this->signature = hashStr;
+    LOG("Generating signature...");
+    value->signature = new char[41];
+    tagHashing(value, (char(*)[41])value->signature);
+    LOG("Signature generated!");
+}
+
+void GardenTag::setSignature(string signature) {
+  LOG("Setting signature...");
+  value->signature = new char[signature.length()+1];
+  strcpy(value->signature, signature.c_str());
+}
+
+void GardenTag::setMessage(string message) {
+  LOG("Setting message...");
+  value->message = new char[message.length()+1];
+  strcpy(value->message, message.c_str());
 }
 

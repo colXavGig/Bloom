@@ -1,38 +1,17 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <filesystem>
-
 #include <openssl/sha.h>
+
+#include "HashNode_struct.h"
+
 using namespace std;
 namespace fs=std::filesystem;
+
 #define FILENODE 1
 #define FOLDERNODE 2
-
-//extern "C" {
-typedef union HashNode_content HashNode_content;
-
-typedef struct HashNode_s {
-    char *signature;
-    char *filename;
-    char *path;
-    int type;
-    HashNode_content *content;
-} HashNode_s;
-
-typedef struct {
-    int type;
-    HashNode_s *signature_node;
-} FolderNode_content;
-
-union HashNode_content {
-    char *file_content;
-    FolderNode_content *folder_contents;
-};
-//}
 
 /**
  * node qui hash son contenue dependament de son type (dir/fichier)
@@ -48,9 +27,6 @@ class HashNode {
     protected:
         /** Structural value of the HashNode */
         HashNode_s *value;
-        // string signature;
-        // string filename;
-        // fs::path path;
 
         /**
          * Construct an HashNode with a pre-generated value
@@ -80,7 +56,7 @@ class HashNode {
          */
         HashNode(const fs::path path, const string filename, const string signature, const int type) {
             init(path, filename, type);
-            value->signature = (char *)signature.data();
+            setSignature(signature);
         }
 
         /**
@@ -96,19 +72,34 @@ class HashNode {
          * Generate and set the hashed signature of the node.
          * Implemented by the subtype
          */
-        virtual void setSignature() = 0;
+        virtual void generateSignature() = 0;
         virtual void setContent(HashNode_content *content) =  0;
 
-    ///////////////////////////////////////////////////////////////////////////////
-
-    public:
         /**
          * Set the path of the HashNode to the provided value
          * @param path The new value for the path
          */
-        void setPath(fs::path path){
-            this->value->path = path.string().data();
-        }
+        void setPath(fs::path path);
+
+        /**
+         * Allocate space for the filename and copy it to the structure
+         * @param filename The filename of the current Node
+         */
+        void setFilename(string filename);
+
+        /**
+         * Allocate space for the signature and copy it to the structure
+         * @param signature The hashed signature of the Node
+         */
+        void setSignature(string signature);
+        /**
+         * Deconstruct
+         */
+        ~HashNode();
+
+    ///////////////////////////////////////////////////////////////////////////////
+
+    public:
 
         /**
          * Ge the hashed signature of the HashNode
@@ -148,7 +139,7 @@ class FileNode : public HashNode{
      * @param p The path to the file which the FileNode need to represent
      */
     FileNode(const fs::path &p): HashNode(p, FILENODE) {
-        setSignature();
+        generateSignature();
     }
 
     /**
@@ -160,7 +151,7 @@ class FileNode : public HashNode{
     FileNode(const fs::path &path,const string filename,const string signature)
     :HashNode(path, filename, signature, FILENODE) {}
 
-    void setContent(char *content);
+    void setContent(string content);
     void setContent(HashNode_content *content) override;
 
 
@@ -172,14 +163,14 @@ class FileNode : public HashNode{
     ////////////////////////////////////////////////////////////////////////
 
     private:
-        void setSignature() override;
+        void generateSignature() override;
  };
 
 
 class FolderNode :public HashNode{
 
     public:
-        void setSignature() override;
+        void generateSignature() override;
 
         FolderNode(HashNode_s *value): HashNode(value) {}
         //constructeur

@@ -1,34 +1,79 @@
 #include "HashNode.h"
 
+#include <iostream>
+#include <cstring>
+#include <sstream>
+
+
 #include "../../processes/Hashing.h"
 
+#define LOGGER_STATUS LOGGER_INACTIVE
+#include "../../debugging.h"
+
 using namespace std;
+
     //////////////////////////////
     ///        HASHNODE        ///
     //////////////////////////////
 
-    void HashNode::init(
-        const fs::path &path,
-        const string filename,
-        int type
-    ) {
-        value = new HashNode_s;
-        setPath(path);
-        value->filename = (char *)filename.data();
-        value->type = type;
-        value->content = new HashNode_content;
-    }
+HashNode::~HashNode() {
+  delete this->value->path;
+  delete this->value->filename;
+  delete this->value->signature;
+  delete this->value;
+}
 
-    HashNode_s *HashNode::getStructValue(){
-      return value;
-    }
+void HashNode::init(
+    const fs::path &path,
+    const string filename,
+    int type
+) {
+    LOG("Initializing HashNode");
+    value = new HashNode_s;
+
+    LOG(("Path is " + path.string()).c_str());
+    setPath(path);
+    LOG(("value->path: " + (string)value->path).c_str());
+
+    LOG(("filename: " + filename).c_str());
+    setFilename(filename);
+    LOG(("value->filename: " + (string)value->filename).c_str());
+
+    LOG(("type: " + to_string(type)).c_str());
+    value->type = type;
+    LOG(("value->type: " + to_string(value->type)).c_str());
+
+
+    value->content = new HashNode_content;
+
+}
+
+HashNode_s *HashNode::getStructValue(){
+  return value;
+}
+
+void HashNode::setPath(fs::path path) {
+    value->path = new char[path.string().size() + 1];
+    strcpy( this->value->path , path.string().data() );
+}
+
+void HashNode::setFilename(string filename) {
+  value->filename = new char[filename.size() + 1];
+  strcpy( this->value->filename , filename.data() );
+}
+
+void HashNode::setSignature(string signature) {
+  value->signature = new char[signature.size() + 1];
+  strcpy( this->value->signature , signature.data() );
+}
 
     //////////////////////////////
     ///        FILENODE        ///
     //////////////////////////////
 
-    void FileNode::setContent(char *content){
-        value->content->file_content = content;
+    void FileNode::setContent(string content){
+        value->content->file_content = new char[content.size() + 1];
+        strcpy(value->content->file_content, content.data() );
     }
 
     void FileNode::setContent(HashNode_content* content){
@@ -68,16 +113,19 @@ using namespace std;
     //setters
     /*
      */
-    void FolderNode::setSignature(){
-        this->value->signature = fullhash().data();
+    void FolderNode::generateSignature(){
+        LOG("Generating signature...");
+        this->value->signature = new char[41];
+        LOG("Memory allocated for signature");
+        strcpy(this->value->signature, fullhash().data());
+        LOG(("Signature: " + this->getSignature()).c_str());
     }
 
     /*
      */
-    void FileNode::setSignature(){
-        char buffer[41];
-        fileHash(getPath().string().c_str(),buffer);
-        this->value->signature = string(buffer).data();
+    void FileNode::generateSignature(){
+        this->value->signature = new char[41];
+        fileHash(getPath().string().c_str(),value->signature);
     }
    
     

@@ -1,16 +1,14 @@
 #include "datacollection/hashTree/HashTree.h"
 #include "fileWriter/FileWriter.h"
-//#include "fileReader/component/Searcher.h"
 #include "paths/GardenPath.h"
 #include "fileReader/FileIterator.h"
 #include "growth/Growth.h"
 
-#define LOGGER_STATUS LOGGER_ACTIVE
+#define LOGGER_STATUS LOGGER_INACTIVE
 #include "debugging.h"
 
 
 void commit(GardenPath *paths, char** arr, int size);
-//void search(char** arr, int size); // TODO: remove if not relevant @Will
 
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
@@ -19,11 +17,8 @@ int main(int argc, char** argv){
     if (cmd == "commit") {
         commit(&paths, argv +2, argc -2);
 
-    } /*else if (cmd == "search") // TODO: remove if not relevant @Will
-    {
-        search(argv+2, argc-2);
-    }*/ else if (cmd == "comp"){
-        cout<<"comparing"<<"\n";
+    } else if (cmd == "comp"){
+
 
         FileIterator *it1 = new FileIterator("./app/testing/blob.txt");
         FileIterator *it2 = new FileIterator("./app/testing/blob2.txt");
@@ -53,13 +48,5 @@ void commit(GardenPath *paths, char** arr, int size) {
     LOG("FileWriter created!");
 
     fw.writeToFile(&HTree, tag_msg);
+    LOG("HashTree written!");
 }
-
-/*
-void search(char** arr, int size)
-{
-    Searcher s;
-    s.rebuild("C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\.garden\\seeds\\2f\\a2f95fb5096f1c44b0a791b5d1c157fa5e614b.txt",
-        "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\ReaderTester");
-}
-*/

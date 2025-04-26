@@ -4,14 +4,17 @@
 
 #include "algo/Juxtapose.h"
 #include <iostream>
-
-#define LOGGER_STATUS LOGGER_INACTIVE
+#include "index/Index.h"
+#define LOGGER_STATUS LOGGER_ACTIVE
 #include "debugging.h"
 
 void commit(GardenPath *paths, char** arr, int size);
 
 int main(int argc, char** argv){
     GardenPath paths = GardenPath(".");
+    Index index = Index();
+    index.setCurrentBranch("main");
+
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
     LOG(("Command : " + cmd).c_str());
     if (cmd == "commit") {

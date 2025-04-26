@@ -35,7 +35,7 @@ bin := main.exe
 
 all: main.exe
 
-main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags) $(obj_paths) $(obj_process) main.o
+main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags) $(obj_paths) $(obj_process) Index.o main.o
 
 	@echo Detected OS: $(detected_OS)
 	g++ $(build)/main.o \
@@ -51,6 +51,7 @@ main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags)
 	$(build)/Hashing.o \
 	$(build)/GardenPath.o \
 	$(build)/GardenTag.o \
+	$(build)/Index.o \
 	-Wall \
 	-I"C:/mingw64/include" \
 	-I"C:/dev/curl-8.13.0_2-win64-mingw/include" \
@@ -141,6 +142,10 @@ Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
 	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/Hashing.o)
 	@echo
 
+Index.o: $(call FIXPATH, $(root)/index/Index.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH, $(root)/index/Index.cpp) -o $(call FIXPATH, $(build)/$@)
+	@echo
 
 main.o: $(call FIXPATH,$(root)/main.cpp)
 	@echo "making $@..."

@@ -1,50 +1,45 @@
 #include "datacollection/hashTree/HashTree.h"
 #include "fileWriter/FileWriter.h"
 #include "paths/GardenPath.h"
-#include "fileReader/FileIterator.h"
-#include "growth/Growth.h"
-#include "index/Index.h"
 
+//#include "algo/Juxtapose.h"
+#include <iostream>
+#include "index/Index.h"
 #define LOGGER_STATUS LOGGER_ACTIVE
 #include "debugging.h"
-
 
 void commit(GardenPath *paths, char** arr, int size);
 
 int main(int argc, char** argv){
-    auto paths = GardenPath(".");
-    LOG("Index created");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    LOG(".");
-    printf(".");
+    GardenPath paths = GardenPath(".");
+    Index index = Index(paths.getIndexFilepath());
+
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
-    printf("here");
     LOG(("Command : " + cmd).c_str());
-    auto index = Index(paths.getIndexFilepath());
     if (cmd == "commit") {
         commit(&paths, argv +2, argc -2);
 
+
     } else if (cmd == "comp"){
 
+        // Juxtapose diff;
+        // try{
+        //     diff.parseMetadata("0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt",
+        //                        "0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt","myLOOOOOOVE");
+        // } catch(const runtime_error &err){
+        //    cerr<< err.what();
+        // }
+        
+    cout<<"succes";
+    } else if (cmd == "growback"){
+     
+    cout<<"succes";
 
-        FileIterator *it1 = new FileIterator("./app/testing/blob.txt");
-        FileIterator *it2 = new FileIterator("./app/testing/blob2.txt");
-        Growth g;
-        while(it1->Next() | it2->Next()){
-            g.compare(it1->getLine(),it1->getIndex(),it2->getLine(),it2->getIndex());
-        }
-        g.printChange();
+
     }
 
-    // index.save();
+    index.save();
     LOG("success");
-    //getchar();
 }
 
 void commit(GardenPath *paths, char** arr, int size) {

@@ -34,10 +34,11 @@ void Index::setCurrentBranch(string branch) {
 void Index::addBranch(Branch *branch) {
   LOG("Adding branch called");
   LOG("Allocating memory");
-  auto tmp = new Branch[value->num_branches++];
+  auto tmp = new Branch[++value->num_branches];
 
-  LOG("Copying branches tot he new memory");
+  LOG("Copying branches to the new memory");
   for (int i = 0; i < value->num_branches - 1; i++) {
+    LOG("hallo");
     tmp[i] = value->branch_heads[i];
   }
   LOG("adding the new branch");
@@ -76,20 +77,30 @@ Index::operator Index_s *() {
 
 void Index::init(fs::path path) {
   LOG("Setting up index...");
-  value = new Index_s;
+  value = new Index_s();
 
   ifstream fis(path);
   if (fis.good()) {
     LOG("Successfully opened index file");
     string firstLine;
+
+
+
+
     if (!fis.eof()) {
       LOG("Getting first line, the current branch.");
       getline(fis, firstLine);
       string currentBranch = firstLine.replace(0, 10, "");
       LOG(("Current branch is: " + currentBranch).c_str());
     }
+
+
+
     string line, branch_name, signature;
     LOG("Getting all branches...");
+
+
+    
     while (!getline(fis, line).eof()) {
       int split = 0;
       for (int i = 0; i < line.size(); i++) {
@@ -98,6 +109,9 @@ void Index::init(fs::path path) {
           break;
         }
       }
+
+
+
       branch_name = line.substr(1, split - 2);
       signature = line.substr(split + 1);
       auto branch = new Branch;
@@ -108,6 +122,10 @@ void Index::init(fs::path path) {
       addBranch(branch);
       LOG("Branch added");
     }
+
+
+
+
   } else {
     LOG("Failed to open index file");
     value->current_branch = "main";
@@ -124,3 +142,4 @@ void Index::init(fs::path path) {
   fis.close();
   LOG("Successfully initialized index");
 }
+

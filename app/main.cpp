@@ -1,76 +1,65 @@
 #include "datacollection/hashTree/HashTree.h"
 #include "fileWriter/FileWriter.h"
-//#include "fileReader/component/Searcher.h"
 #include "paths/GardenPath.h"
-<<<<<<< HEAD
-#include "algo/Compare/CompareTree.h"
-
-
-=======
-#include "fileReader/FileIterator.h"
-#include "growth/Growth.h"
-
-void commit(fileWriter paths, char** arr, int size);
+#include "algo/Juxtapose.h"
+#include <iostream>
+void commit(GardenPath *paths, char** arr, int size);
 //void search(char** arr, int size);
->>>>>>> 57c66847cdbd5f591c25e3e78601257cc47bbdde
 
 int main(int argc, char** argv){
-    auto paths = GardenPath(".");
-    string cmd = (argc >= 1) ? argv[1] :/* === DEFAULT === */ "commit";
+    GardenPath paths = GardenPath(".");
+    string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
     if (cmd == "commit")
     {
         commit(&paths, argv +2, argc -2);
-    } /*else if (cmd == "search")
-    {
-        search(argv+2, argc-2);
-    }*/ else if (cmd == "comp"){
-        cout<<"comparing"<<"\n";
+    } else if (cmd == "comp"){
 
-<<<<<<< HEAD
-        CompareTree comp;
-        //remplacer ca par des commits
-        comp.compareFolder("80c0b919e881434f1e18fc097bc79033014e31eb.txt","0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt");
-        comp.printChange();
+        Juxtapose diff;
+        try{
+            diff.parseMetadata("0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt",
+                               "0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt","myLOOOOOOVE");
+        } catch(const runtime_error &err){
+           cerr<< err.what();
+        }
+        
     cout<<"succes";
     } else if (cmd == "growback"){
-        cout<<"comparing"<<"\n";
-
-        CompareTree comp;
-        //remplacer ca par des commits
-        comp.compareFolder("80c0b919e881434f1e18fc097bc79033014e31eb.txt","0a5c758ae3608bd5a2a3a8750409256cbc5e2ff2.txt");
-        comp.printChange();
+     
     cout<<"succes";
-=======
-        FileIterator *it1 = new FileIterator("./app/testing/blob.txt");
-        FileIterator *it2 = new FileIterator("./app/testing/blob2.txt");
-        Growth g;
-        while(it1->Next() | it2->Next()){
-            g.compare(it1->getLine(),it1->getIndex(),it2->getLine(),it2->getIndex());
-        }
-        g.printChange();
->>>>>>> 57c66847cdbd5f591c25e3e78601257cc47bbdde
+
+
     }
 
-    cout<<"succes";
-    //getchar();
+
 }
 
-<<<<<<< HEAD
-}
-
-
-=======
 void commit(GardenPath *paths, char** arr, int size)
 {
-    string tag_msg = (arr[0] == "-m") ? arr[1] : "";
+    string tag_msg = (arr[0] == "-m") ? arr[1] : "<EMPTY>";
 
     FolderNode *root = new FolderNode("./app/testing");
     HashTree HTree =  HashTree(root);
-
     fileWriter fw = fileWriter(paths);
     fw.writeToFile(&HTree, tag_msg);
 }
 
+
+// void Diff(FOS *fos,const fs::path &p1,const fs::path &p2){
+//     Juxtapose diff;
+//     //checks
+//     if(fs::exists(p1) && fs::exists(p2)) 
+//         throw new runtime_error("Path invalide.");    
+
+//     if(fs::status(p1).type() != fs::status(p2).type())
+//         throw std::runtime_error("Paths sont des different type");
+
+//     if(fs::is_directory(p1)){
+//         diff.folder(fos, p1.string().c_str(), p1.string().c_str());
+//     }
+//     if(fs::is_regular_file(p1)){
+//         diff.file(fos, p1.string().c_str(), p1.string().c_str());
+//     }
+// }
 /*
 void search(char** arr, int size)
 {
@@ -79,4 +68,4 @@ void search(char** arr, int size)
         "C:\\Users\\willd\\OneDrive\\Desktop\\projet structure\\Bloom\\app\\ReaderTester");
 }
 */
->>>>>>> 57c66847cdbd5f591c25e3e78601257cc47bbdde
+

@@ -1,8 +1,7 @@
 #pragma once
 #include <iostream>
 #include "HashNode.h"
-#include "../../processes/Hashing.h"
-#include "../../garden_tags/GardenTags.h"
+
 using namespace std;
 namespace  fs =  std::filesystem;
 /**
@@ -16,7 +15,7 @@ class HashTree {
         HashTree(FolderNode *root);
         void listBranches(FolderNode* parent);
 
-        FolderNode* getRoot() {
+        FolderNode* getRoot() const {
             return this->root;
         }
 

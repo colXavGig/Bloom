@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdexcept> 
 #define HASH_SIZE 20
 /*
 Construit pour le plaisir,
@@ -15,8 +16,8 @@ typedef struct {
     unsigned char* data;
     int size;
     int capacity;
-} StringVector; 
+} HashVector; 
 
-int stringvector_init(StringVector *v);   
-int push_back(StringVector *v, unsigned char *data);
+int HashVector_init(HashVector *v);   
+int HashVector_pushback(HashVector *v, unsigned char *data);
 

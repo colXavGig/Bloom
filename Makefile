@@ -15,83 +15,139 @@ endif
 # Compiler settings
 root=./app
 build=$(root)/build
-objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o GardenPath.o main.o
+CXX := g++
+CXXFLAGS := -Wall -I"C:/mingw64/include" -I"C:/dev/curl-8.13.0_2-win64-mingw/include"
+LDFLAGS := -L"C:/mingw64/lib/MT" -L"C:/dev/curl-8.13.0_2-win64-mingw/lib" -lssl -lcrypto -lcurl
+#folder objects
+obj_algo := FOS_FILE_S.o FOS_METADATA.o FUNCTIONSTACK.o DIFF.o JUXTAPOSE.o
+
+obj_dataCollection := StringVector.o HashNode.o HashTree.o
+
+obj_fileWriter := FileWriter.o
+
+obj_garden_tags := GardenTag.o
+
+obj_paths := GardenPath.o
+
+obj_process := Hashing.o 
+
 bin := main.exe
 
 all: main.exe
+
+main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags) $(obj_paths) $(obj_process) main.o
+
 	@echo Detected OS: $(detected_OS)
-
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o FolderIterator.o CompareTree.o GardenPath.o main.o
-
-
-	@echo "making executable...\n";
 	g++ $(build)/main.o \
-	$(build)/datacollection/HashTree.o \
-	$(build)/datacollection/HashNode.o \
-	$(build)/datacollection/StringVector.o \
-	$(build)/filewriter/FileWriter.o  \
-	$(build)/filereader/FileIterator.o  \
-	$(build)/filereader/FolderIterator.o  \
-	$(build)/algo/compare/CompareTree.o  \
-	$(build)/hashing/Hashing.o \
+	$(build)/FOS_FILE_S.o \
+	$(build)/FOS_METADATA.o \
+	$(build)/FUNCTIONSTACK.o \
+	$(build)/DIFF.o \
+	$(build)/JUXTAPOSE.o \
+	$(build)/HashTree.o \
+	$(build)/HashNode.o \
+	$(build)/StringVector.o \
+	$(build)/FileWriter.o  \
+	$(build)/Hashing.o \
 	$(build)/GardenPath.o \
-	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe
+	$(build)/GardenTag.o \
+	-Wall \
+	-I"C:/mingw64/include" \
+	-I"C:/dev/curl-8.13.0_2-win64-mingw/include" \
+	-L"C:/mingw64/lib/MT" \
+	-L"C:/dev/curl-8.13.0_2-win64-mingw/lib" \
+	-lssl -lcrypto  \
+	-o main.exe
 
 
+# TODO: delete if not used
+#	$(build)/filebuilder/FileBuilder.o  
 
-Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
-	@echo "making $@...\n";
-	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/hashing/Hashing.o)
+##===============================================================================
+##			                   algo folder     
+##===============================================================================
+FOS_FILE_S.o: $(call FIXPATH,$(root)/algo/FOS/FILE_S.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH, $(root)/algo/FOS/FILE_S.cpp) -o $(call FIXPATH,$(build)/FOS_FILE_S.o)
 	@echo
 
-#datacollection
+FOS_METADATA.o: $(call FIXPATH, $(root)/algo/FOS/MetaData.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/algo/FOS/MetaData.cpp) -o $(call FIXPATH,$(build)/FOS_METADATA.o)
+	@echo
 
+FUNCTIONSTACK.o: $(root)/algo/Stack/FunctionStack.cpp
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/algo/Stack/FunctionStack.cpp) -o $(call FIXPATH,$(build)/FUNCTIONSTACK.o)
+	@echo
+
+DIFF.o: $(call FIXPATH, $(root)/algo/Diff.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/algo/Diff.cpp) -o $(call FIXPATH,$(build)/DIFF.o)
+	@echo
+
+JUXTAPOSE.o: $(root)/algo/Juxtapose.cpp
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/algo/Juxtapose.cpp) -o $(call FIXPATH,$(build)/JUXTAPOSE.o)
+	@echo
+##===============================================================================
+##			                   data collection
+##===============================================================================
 StringVector.o: $(root)/datacollection/dynamicarray/Vector.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/datacollection/StringVector.o)
+	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/StringVector.o)
 	@echo
 
-HashNode.o: $(call FIXPATH, $(root)/datacollection/hashTree/HashNode.cpp)
+HashNode.o: $(root)/datacollection/hashTree/HashNode.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashNode.cpp) -o $(call FIXPATH,$(build)/datacollection/HashNode.o)
+	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashNode.cpp) -o $(call FIXPATH,$(build)/HashNode.o)
 	@echo
 
 HashTree.o: $(root)/datacollection/hashTree/HashTree.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/datacollection/HashTree.o)
+	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/HashTree.o)
 	@echo
 
+
+##===============================================================================
+##			                   filewriter
+##===============================================================================
 FileWriter.o: $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/filewriter/FileWriter.o)
+	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/FileWriter.o)
 	@echo
 
-FileIterator.o: $(call FIXPATH,$(root)/fileReader/FileIterator.cpp)
+##===============================================================================
+##			                   path
+##===============================================================================
+GardenPath.o: $(call FIXPATH, $(root)/paths/GardenPath.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileReader/FileIterator.cpp) -o $(call FIXPATH,$(build)/filereader/FileIterator.o)
+	g++ -c $(call FIXPATH, $(root)/paths/GardenPath.cpp) -o $(call FIXPATH, $(build)/GardenPath.o)
 	@echo
 
-FolderIterator.o: $(call FIXPATH,$(root)/fileReader/FolderIterator.cpp)
+##===============================================================================
+##			                   garden tags
+##===============================================================================
+GardenTag.o: $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileReader/FolderIterator.cpp) -o $(call FIXPATH,$(build)/filereader/FolderIterator.o)
+	g++ -c $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp) -o $(call FIXPATH,$(build)/GardenTag.o)
 	@echo
-	
-CompareTree.o: $(call FIXPATH,$(root)/algo/compare/CompareTree.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/algo/compare/CompareTree.cpp) -o $(call FIXPATH,$(build)/algo/compare/CompareTree.o)
+
+##===============================================================================
+##			                   processes
+##===============================================================================
+Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
+	@echo "making $@...\n";
+	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/Hashing.o)
 	@echo
-	
-	
+
 
 main.o: $(call FIXPATH,$(root)/main.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/main.cpp) -o $(call FIXPATH,$(build)/main.o)
 	@echo
 
-GardenPath.o: $(call FIXPATH, $(root)/paths/GardenPath.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/paths/GardenPath.cpp) -o $(call FIXPATH, $(build)/GardenPath.o)
-	@echo
+
 run: all
 	./main.exe
 # Clean build directory

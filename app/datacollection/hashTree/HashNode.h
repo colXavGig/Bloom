@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -18,7 +19,7 @@ Propriete 1: le nom du dir/fichier
 Propriete 2: le hash du dir/fichier
 propriete 3:
 */
-class HashNode{
+class HashNode {
     protected:
         string signature; 
         string filename;   

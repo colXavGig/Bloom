@@ -2,3 +2,4 @@ app/build/*.o
 app/build/**/*.o
 .garden
 .idea
+/*.exe

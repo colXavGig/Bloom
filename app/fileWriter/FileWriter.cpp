@@ -1,6 +1,6 @@
 #include "FileWriter.h"
 
-#include "../garden_tags/GardenTags.h"
+#include "../garden_tags/GardenTag.h"
 
 void fileWriter::writeToFile(HashTree *tree, string commit_msg) {
     this->createGarden(tree->getRoot());
@@ -42,6 +42,7 @@ void fileWriter::savingFile(const FileNode *node){
 //     file    sadfsadff   file2.txt
 //     Folder  asdfhsdfs   subdir
 void fileWriter::savingFolder(const FolderNode *node){
+
     string folder,file;
     createFileStructure(node->getSignature(),folder,file);
 
@@ -67,7 +68,9 @@ void fileWriter::savingGardenTag(HashTree *tree, string tag_msg){
     GardenTag tag = GardenTag(tree, tag_msg);
     string folderPath, filePath;
     createFileStructure(tag.getHash(), folderPath, filePath);
-    fs::path targetPath = this->gardenpath->getTagPath() / folderPath;
+    fs::path targetPath = this->gardenpath->getTagPath();
+    fs::create_directory(targetPath);
+    targetPath/= folderPath;
     fs::create_directory(targetPath);
     targetPath /= filePath;
     std::ofstream outFile(targetPath);

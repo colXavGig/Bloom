@@ -1,5 +1,4 @@
 #include "Hashing.h"
-#include <vector>
 
 //boolean
 #define TRUE 1
@@ -47,7 +46,7 @@ int HtoS(const unsigned char* hash,char* buffer){
 //takes a file and hashes it
 int fileHash(const char *filename,char* buffer){
     unsigned char hash[HASH_SIZE];
-    StringVector vec;
+    HashVector vec;
     //openFile read-only
     FILE *fptr = fopen(filename,"r");
     //assurer que le pointer n'est pas null
@@ -55,9 +54,9 @@ int fileHash(const char *filename,char* buffer){
       printf("File doesn't exist :(");
     }
     //initialisation du data
-    init(&vec);  
+    HashVector_init(&vec);  
     while(getline(fptr,hash)){
-        push_back(&vec,hash);
+        HashVector_pushback(&vec,hash);
     }
     fclose(fptr);
     SHA1(vec.data, vec.size * HASH_SIZE, hash);   
@@ -65,16 +64,3 @@ int fileHash(const char *filename,char* buffer){
 
     return 1;
 }
-
-int tagHashing(GardenTag *tag, unsigned char *hash) {
-  SHA_CTX ctx;
-  string h = tag->getRootHash();
-  SHA1_Init(&ctx);
-  SHA1_Update(&ctx, &(tag->timestamp), sizeof(tag->timestamp));
-  SHA1_Update(&ctx, &h, sizeof(h));
-  SHA1_Update(&ctx, &tag->message, sizeof(tag->message));
-  SHA1_Final(hash, &ctx);
-}
-
-
-

@@ -1,4 +1,6 @@
-#include "GardenTags.h"
+#include "GardenTag.h"
+
+#include "../processes/tag_hashing.cpp"
 using namespace std;
 
 
@@ -20,7 +22,7 @@ string GardenTag::getMessage() {
 ///                PRIVATE                ///
 /////////////////////////////////////////////
 
-void GardenTag::setRoot(HashNode *root) {
+void GardenTag::setRoot(FolderNode *root) {
   this->root = root;
 }
 

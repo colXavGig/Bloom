@@ -3,8 +3,9 @@
 #include "paths/GardenPath.h"
 #include "fileReader/FileIterator.h"
 #include "growth/Growth.h"
+#include "index/Index.h"
 
-#define LOGGER_STATUS LOGGER_INACTIVE
+#define LOGGER_STATUS LOGGER_ACTIVE
 #include "debugging.h"
 
 
@@ -12,8 +13,20 @@ void commit(GardenPath *paths, char** arr, int size);
 
 int main(int argc, char** argv){
     auto paths = GardenPath(".");
+    LOG("Index created");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    LOG(".");
+    printf(".");
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
+    printf("here");
     LOG(("Command : " + cmd).c_str());
+    auto index = Index(paths.getIndexFilepath());
     if (cmd == "commit") {
         commit(&paths, argv +2, argc -2);
 
@@ -29,7 +42,7 @@ int main(int argc, char** argv){
         g.printChange();
     }
 
-
+    // index.save();
     LOG("success");
     //getchar();
 }

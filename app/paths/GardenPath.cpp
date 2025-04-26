@@ -9,6 +9,10 @@ namespace fs = std::filesystem;
 
 
 
+fs::path GardenPath::getIndexFilepath() {
+  return getGardenPath() / "index";
+}
+
 GardenPath::GardenPath(string root) {
     this->root = fs::path(root);
 }

@@ -15,26 +15,27 @@ endif
 # Compiler settings
 root=./app
 build=$(root)/build
-objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o main.o
+objects := Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o main.o, Index.o
 bin := main.exe
 
 all: main.exe
 	@echo Detected OS: $(detected_OS)
 
-main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o GardenTag.o main.o
+main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterator.o Growth.o GardenPath.o GardenTag.o main.o Index.o
 
 
 	@echo "making executable...\n";
 	g++ $(build)/main.o \
-	$(build)/datacollection/HashTree.o \
-	$(build)/datacollection/HashNode.o \
-	$(build)/datacollection/StringVector.o \
-	$(build)/filewriter/FileWriter.o  \
-	$(build)/filereader/FileIterator.o  \
-	$(build)/hashing/Hashing.o \
-	$(build)/growth/Growth.o \
+	$(build)/HashTree.o \
+	$(build)/HashNode.o \
+	$(build)/StringVector.o \
+	$(build)/FileWriter.o  \
+	$(build)/FileIterator.o  \
+	$(build)/Hashing.o \
+	$(build)/Growth.o \
 	$(build)/GardenPath.o \
 	$(build)/GardenTag.o \
+	$(build)/Index.o \
 	-Wall -I"C:/mingw64/include" -L"C:/mingw64/lib/MT" -lssl -lcrypto -o main.exe
 
 # TODO: delete if not used
@@ -43,39 +44,39 @@ main.exe:Hashing.o StringVector.o HashNode.o HashTree.o FileWriter.o FileIterato
 
 Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
 	@echo "making $@...\n";
-	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/hashing/Hashing.o)
+	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/Hashing.o)
 	@echo
 
 #datacollection
 
 StringVector.o: $(root)/datacollection/dynamicarray/Vector.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/datacollection/StringVector.o)
+	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/StringVector.o)
 	@echo
 
 HashNode.o: $(call FIXPATH, $(root)/datacollection/hashTree/HashNode.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashNode.cpp) -o $(call FIXPATH,$(build)/datacollection/HashNode.o)
+	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashNode.cpp) -o $(call FIXPATH,$(build)/HashNode.o)
 	@echo
 
 HashTree.o: $(root)/datacollection/hashTree/HashTree.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/datacollection/HashTree.o)
+	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/HashTree.o)
 	@echo
 
 FileWriter.o: $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/filewriter/FileWriter.o)
+	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/FileWriter.o)
 	@echo
 
 FileIterator.o: $(call FIXPATH,$(root)/fileReader/FileIterator.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileReader/FileIterator.cpp) -o $(call FIXPATH,$(build)/filereader/FileIterator.o)
+	g++ -c $(call FIXPATH,$(root)/fileReader/FileIterator.cpp) -o $(call FIXPATH,$(build)/FileIterator.o)
 	@echo
 	
 Growth.o: $(call FIXPATH,$(root)/growth/Growth.cpp)
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/growth/Growth.cpp) -o $(call FIXPATH,$(build)/growth/Growth.o)
+	g++ -c $(call FIXPATH,$(root)/growth/Growth.cpp) -o $(call FIXPATH,$(build)/Growth.o)
 	@echo	
 	
 #FileBuilder.o: $(call FIXPATH,$(root)/fileReader/component/FileBuilder.cpp)
@@ -97,6 +98,12 @@ GardenPath.o: $(call FIXPATH, $(root)/paths/GardenPath.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH, $(root)/paths/GardenPath.cpp) -o $(call FIXPATH, $(build)/GardenPath.o)
 	@echo
+
+Index.o: $(call FIXPATH, $(root)/index/Index.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH, $(root)/index/Index.cpp) -o $(call FIXPATH, $(build)/$@)
+	@echo
+
 run: all
 	./main.exe
 # Clean build directory

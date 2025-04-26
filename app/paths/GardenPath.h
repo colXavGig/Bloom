@@ -17,6 +17,7 @@ class GardenPath {
         fs::path getGardenPath();
         fs::path getSeedPath();
         fs::path getTagPath();
+        fs::path getIndexFilepath();
 };
 
 

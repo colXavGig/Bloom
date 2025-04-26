@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 #include "Index_struct.h"
 
 using namespace std;
+namespace  fs =  std::filesystem;
 
 /**
 * L'Index est un fichier dans '.garden' contenant un pointer vers
@@ -31,23 +33,26 @@ using namespace std;
 * de la branch dans l'index puis modifie le fichier index afin de
 * remplacer le nouveau head.
 *
-* La class Index est
 */
 class Index {
     public:
-        Index();
+        Index(fs::path path);
         ~Index();
 
         string getCurrentBranch();
         void setCurrentBranch(string branch);
+        void addBranch(Branch *branch);
 
         Index_s *getStructuralValue();
+
+        void save();
         operator Index_s();
         operator Index_s *();
     private:
         Index_s *value;
+        fs::path path;
 
-        void init();
+        void init(fs::path path);
 
 
 

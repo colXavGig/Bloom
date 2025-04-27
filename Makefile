@@ -23,7 +23,7 @@ obj_algo := FOS_FILE_S.o FOS_METADATA.o FUNCTIONSTACK.o DIFF.o JUXTAPOSE.o
 
 obj_dataCollection := StringVector.o HashNode.o HashTree.o
 
-obj_fileWriter := FileWriter.o
+obj_GardenManipulation := FileWriter.o FileBuilder.o Navigation.o
 
 obj_garden_tags := GardenTag.o
 
@@ -35,7 +35,7 @@ bin := main.exe
 
 all: main.exe
 
-main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags) $(obj_paths) $(obj_process) Index.o main.o
+main.exe:$(obj_algo) $(obj_dataCollection) $(obj_GardenManipulation)  $(obj_garden_tags) $(obj_paths) $(obj_process) Index.o main.o
 
 	@echo Detected OS: $(detected_OS)
 	g++ $(build)/main.o \
@@ -48,6 +48,8 @@ main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags)
 	$(build)/HashNode.o \
 	$(build)/StringVector.o \
 	$(build)/FileWriter.o  \
+	$(build)/FileBuilder.o  \
+	$(build)/Navigation.o  \
 	$(build)/Hashing.o \
 	$(build)/GardenPath.o \
 	$(build)/GardenTag.o \
@@ -64,9 +66,9 @@ main.exe:$(obj_algo) $(obj_dataCollection) $(obj_fileWriter)  $(obj_garden_tags)
 # TODO: delete if not used
 #	$(build)/filebuilder/FileBuilder.o  
 
-##===============================================================================
-##			                   algo folder     
-##===============================================================================
+##===============================================================================##
+##			                   algo folder     									 ##
+##===============================================================================##
 FOS_FILE_S.o: $(call FIXPATH,$(root)/algo/FOS/FILE_S.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH, $(root)/algo/FOS/FILE_S.cpp) -o $(call FIXPATH,$(build)/FOS_FILE_S.o)
@@ -91,9 +93,9 @@ JUXTAPOSE.o: $(root)/algo/Juxtapose.cpp
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/algo/Juxtapose.cpp) -o $(call FIXPATH,$(build)/JUXTAPOSE.o)
 	@echo
-##===============================================================================
-##			                   data collection
-##===============================================================================
+##===============================================================================##
+##			                   data collection									 ##
+##===============================================================================##
 StringVector.o: $(root)/datacollection/dynamicarray/Vector.cpp
 	@echo "making $@..."
 	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/StringVector.o)
@@ -111,13 +113,22 @@ HashTree.o: $(root)/datacollection/hashTree/HashTree.cpp
 
 
 ##===============================================================================
-##			                   filewriter
+##			                   GardenManipulation
 ##===============================================================================
 FileWriter.o: $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp)
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/fileWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/FileWriter.o)
 	@echo
+	
+FileBuilder.o: $(call FIXPATH,$(root)/fileBuilder/fileBuilder.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/fileBuilder/fileBuilder.cpp) -o $(call FIXPATH,$(build)/FileBuilder.o)
+	@echo
 
+Navigation.o: $(call FIXPATH,$(root)/GardenNavigation/Navigation.cpp)
+	@echo "making $@..."
+	g++ -c $(call FIXPATH,$(root)/GardenNavigation/Navigation.cpp) -o $(call FIXPATH,$(build)/Navigation.o)
+	@echo
 ##===============================================================================
 ##			                   path
 ##===============================================================================

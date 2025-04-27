@@ -1,16 +1,23 @@
 #include "FileWriter.h"
-
-#include "../garden_tags/GardenTag.h"
-
-#define LOGGER_STATUS LOGGER_INACTIVE
+#include <string.h>
+#define LOGGER_STATUS LOGGER_ACTIVE
 #include "../debugging.h"
 
-void fileWriter::writeToFile(HashTree *tree, string commit_msg) {
+
+/**
+ * 
+ * 
+ * 
+ * 
+ * @return return le hash du tag
+ */
+string fileWriter::writeToFile(HashTree *tree, string commit_msg, string parentsignature) {
+    LOG(" ");
+    LOG(" ");
     LOG("Starting to write tree to file...");
     this->createGarden(tree->getRoot());
     LOG("Garden seeds saved!");
-    this->savingGardenTag(tree, commit_msg);
-    LOG("Garden tags saved!");
+    return this->savingGardenTag(tree, commit_msg, parentsignature);
 }
 
 void fileWriter::createFileStructure(string fullsignature,string &folder,string &file){  
@@ -67,30 +74,41 @@ void fileWriter::savingFolder(const FolderNode *node){
         ofs<<"[FOLDER]"<<" "<<folder->getSignature()<<" "<<folder->getFileName()<<"\n";
     }
 }
-
-void fileWriter::savingGardenTag(HashTree *tree, string tag_msg){
-    LOG("Saving garden tag...");
-    GardenTag tag = GardenTag(tree, tag_msg);
-    LOG("Garden tag created!");
+/**
+ * patch retourne gardentag mais je pense pas que c'est trop bon
+ * 
+ * 
+ */
+string fileWriter::savingGardenTag(HashTree *tree, string tag_msg,string parentsignature ){
+                                                                                            LOG("Saving garden tag...");
+    GardenTag tag = GardenTag(tree, tag_msg, parentsignature);
+                                                                                            LOG("Garden tag created!");
     string folderPath, filePath;
-    LOG("Garden seeds saved!");
-    LOG(("Creating fs structure with hash: " + tag.getHash()).c_str());
+                                                                                            LOG("Garden seeds saved!");
+                                                                                            LOG(("Creating fs structure with hash: " + tag.getHash()).c_str());
     createFileStructure(tag.getHash(), folderPath, filePath);
-    LOG("FileStructure generated!");
-    LOG(("Folder path: "+folderPath).c_str());
-    LOG(("File path: "+filePath).c_str());
+                                                                                            LOG("FileStructure generated!");
+                                                                                            LOG(("Folder path: "+folderPath).c_str());
+                                                                                            LOG(("File path: "+filePath).c_str());
     fs::path targetPath = this->gardenpath->getTagPath();
-    fs::create_directory(targetPath); LOG(("Making sure "+ targetPath.string() +" exists...").c_str());
+    fs::create_directory(targetPath);                                                       LOG(("Making sure "+ targetPath.string() +" exists...").c_str());
     targetPath/= folderPath;
-    fs::create_directory(targetPath); LOG(("Making sure "+ targetPath.string() +" exists...").c_str());
+    fs::create_directory(targetPath);                                                       LOG(("Making sure "+ targetPath.string() +" exists...").c_str());
     targetPath /= filePath;
+     if (fs::exists(targetPath)) {
+         LOG(("Tag already exists at: " + targetPath.string()).c_str());
+         return tag.getHash();
+    }
     std::ofstream outFile(targetPath);
-
+    
+    outFile << "[PARENT] "<<tag.getparentSignature()<< std::endl;
     outFile << "[MSG] " << tag.getMessage() << std::endl;
     outFile << "[TREE] " << tag.getRootHash() << std::endl;
     outFile <<  std::endl;
 
     outFile.close();
+                                                                                            LOG(("root hash: "+tag.getHash()).c_str());
+    return tag.getHash();
 }
 
 

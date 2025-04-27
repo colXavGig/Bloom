@@ -16,3 +16,20 @@ bool Diff:: tryRead(FILE_S out){
     out = diff[size--];
     return true;
 }
+
+void Diff::readAll() {
+    for (int i = 0; i < size; ++i) {
+        FILE_S file = diff[i];
+
+
+        printf("File: %s, Type: %s\n", file.filename, file.type);
+
+  
+        for (int j = 0; j < file.size; ++j) {
+            LINE line = file.contained[j];
+            printf("Line %d: Parent[%s] Head[%s]\n", j, line.diff[0], line.diff[1]);
+        }
+
+        printf("\n"); 
+    }
+}

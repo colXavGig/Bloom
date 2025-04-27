@@ -4,7 +4,7 @@
 #include "../paths/GardenPath.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
-
+#include "../garden_tags/GardenTag.h"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -28,7 +28,7 @@ public:
      * @param tree representing the current repo state
      * @param commit_msg message to keep in the GardenTag
      */
-    void writeToFile(HashTree *tree, string tag_msg);;
+    string writeToFile(HashTree *tree, string tag_msg, string parentsignature);
 
 private:
     /** Collection of path for the .garden/ folder */
@@ -46,8 +46,10 @@ private:
      * Save the GardenTag into the filesystem
      * @param tree A pointer to the HashTrww the tag should point to
      * @param tag_msg The message that describe the commit
+     * @param signature du commit precendent
+     * TODO PATCH RETURN
      */
-    void savingGardenTag(HashTree *tree, string tag_msg);
+    string savingGardenTag(HashTree *tree, string tag_msg, string parensignature);
 
 };
 

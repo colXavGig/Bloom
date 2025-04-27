@@ -1,11 +1,10 @@
 #pragma once
 
 #include <string>
-
+#include <filesystem>
 #include "Index_struct.h"
-
 using namespace std;
-
+namespace  fs =  std::filesystem;
 /**
 * L'Index est un fichier dans '.garden' contenant un pointer vers
 * la branch courante ou le commit courrante.
@@ -35,22 +34,31 @@ using namespace std;
 */
 class Index {
     public:
-        Index();
+        Index(const fs::path& path);
         ~Index();
-
-        string getCurrentBranch();
-        void setCurrentBranch(string branch);
-
+        
+        void addBranch(Branch *branch);
         Index_s *getStructuralValue();
-        operator Index_s();
+
+        void save();
+        operator Index_s &();
         operator Index_s *();
+
+        //commit event
+        void commit(const string& signature);
+        string getSignature();
+
+        //branch functions
+        void setCurrentBranch(const string& name);
+        void createNewBranch(const string& name,const string& signature);
     private:
         Index_s *value;
+        fs::path path;
 
-        void init();
+        void init(fs::path path);
 
-
-
+        string readToken(char **line);
+        Branch *createBranch(const string& branch_name, const string& signature);
 };
 
 

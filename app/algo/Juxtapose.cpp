@@ -2,9 +2,16 @@
 
 void Juxtapose::parseMetadata(const char *sign1, const char *sign2,std::string p){
     //li le folder file et sort les folders et files
-    fillqueues(parentQueue, path.getFlowerPath(sign1).string().c_str());
-    fillqueues(headQueue,   path.getFlowerPath(sign2).string().c_str());
+    std::string p1 = path.getFlowerPath(sign1).string();
+    std::string p2 = path.getFlowerPath(sign2).string();
+
+    fillqueues(parentQueue, p1.c_str());
+    fillqueues(headQueue,   p2.c_str());
+
+
+    std::cout <<"about to parse file\n";
     parsefile(p);
+    std::cout <<"about to parse folder\n";
     parsefolder(p);
 }
 
@@ -14,32 +21,58 @@ void Juxtapose::parseMetadata(const char *sign1, const char *sign2,std::string p
  */
 void Juxtapose::parsefolder(std::string p){  
     while (true) {
-        if (parentQueue.folderQueue.empty() && headQueue.folderQueue.empty()) {
+
+
+        if (parentQueue.folderQueue.empty() && headQueue.folderQueue.empty())
             break;
-        }
+        
     
         bool flowParent = !parentQueue.folderQueue.empty();
         bool flowHead = !headQueue.folderQueue.empty();
     
-        MetaDataFOS_S pf = MetaDataFOS_S_Invalid();
-        MetaDataFOS_S hf = MetaDataFOS_S_Invalid();
-    
-        if (flowParent) pf = parentQueue.folderQueue.front();
-        if (flowHead) hf = headQueue.folderQueue.front();
+        MetaDataFOS_S pf = (flowParent) ?  parentQueue.folderQueue.front() : MetaDataFOS_S_NULLSTATE();
+        MetaDataFOS_S hf = (flowHead) ?  headQueue.folderQueue.front()   : MetaDataFOS_S_NULLSTATE(); 
     
         if (!flowParent) { headQueue.folderQueue.pop(); continue;}
         if (!flowHead)   { parentQueue.folderQueue.pop(); continue;}
     
-        int cmp = strcmp(pf.fosname, hf.fosname);   
+        int cmp = safe_strcmp(pf.fosname, hf.fosname);   
         if (cmp > 0) { headQueue.folderQueue.pop(); continue;}
         if (cmp < 0) { parentQueue.folderQueue.pop(); continue;}
     
         if (strcmp(pf.signature, hf.signature) != 0) {
-            parseMetadata(pf.signature, hf.signature, p + std::string(pf.fosname));
+            parseMetadata(pf.signature, hf.signature, p +"/"+ std::string(pf.fosname));
         }
     
         parentQueue.folderQueue.pop();
         headQueue.folderQueue.pop();
+    }
+}
+
+
+
+
+
+void Juxtapose::fillqueues(FOS_MD_QUEUE& fos, const char *sign1){
+
+    FILE *parent  = fopen(sign1,"r");
+    if (!parent) {
+        return;
+    }
+
+    std::vector<MetaDataFOS_S> tempVec;
+    char parentOut[200];
+    while((fgets(parentOut, sizeof(parentOut), parent) != NULL)){
+        MetaDataFOS_S md = MetaDataFOS_init(parentOut); 
+        tempVec.push_back(md);
+    }
+    fclose(parent);
+    std::sort(tempVec.begin(), tempVec.end(), [](const MetaDataFOS_S& a, const MetaDataFOS_S& b) {
+        return strcmp(a.fosname, b.fosname) < 0;
+    });
+
+    for (const auto& elem : tempVec) {
+        fos.addToQueue(elem);
     }
 }
 
@@ -57,117 +90,96 @@ void Juxtapose::parsefile(std::string p){
 
         bool flowParent = !parentQueue.fileQueue.empty();
         bool flowHead = !headQueue.fileQueue.empty();
-        //initialisation;
-        MetaDataFOS_S pf = MetaDataFOS_S_Invalid();
-        MetaDataFOS_S hf = MetaDataFOS_S_Invalid();
+        //initialisation; 
+        MetaDataFOS_S pf = (flowParent) ?  parentQueue.fileQueue.front() : MetaDataFOS_S_NULLSTATE();
+        MetaDataFOS_S hf = (flowHead) ?  headQueue.fileQueue.front()   : MetaDataFOS_S_NULLSTATE(); 
 
-        if (flowParent) pf = parentQueue.fileQueue.front();
-        if (flowHead)   hf = headQueue.fileQueue.front();  
-        int cmp = strcmp(pf.fosname, hf.fosname); 
+        int cmp = safe_strcmp(pf.fosname, hf.fosname); 
 
         if (cmp > 0) {
-            compare(path.getFlowerPath(pf.signature).string().c_str(), 
-                    " ",
-                    "[-]",
-                    pf.fosname,
-                    p);
-                    headQueue.fileQueue.pop();
+            std::cout<< "in cmp >0\n";
+            compareSingleValidFile(&pf,false, p);
+            parentQueue.fileQueue.pop();
             continue;
         }
         if (cmp < 0) {
-            compare(" ", 
-                    path.getFlowerPath(hf.signature).string().c_str(),
-                    "[+]",
-                    hf.fosname,
-                    p);
-                    parentQueue.fileQueue.pop();
+            std::cout<< "in cmp <0";
+            compareSingleValidFile(&hf,true, p);
+            headQueue.fileQueue.pop();
             continue;
         }
         
-        if (strcmp(pf.signature, hf.signature) != 0) {
-            compare(path.getFlowerPath(pf.signature).string().c_str(), 
-                    path.getFlowerPath(hf.signature).string().c_str(),
-                    "[~]",
-                    pf.fosname,
-                    p);
+        if (safe_strcmp(pf.signature, hf.signature) != 0) {
+            std::cout<< "signature ==0";
+            compareBothValidFiles(&pf,&hf, p);
         }
-        parentQueue.fileQueue.pop();
         headQueue.fileQueue.pop();
+        parentQueue.fileQueue.pop();
     }
+
 }
 
-void Juxtapose::compare(const char *sign1, const char *sign2,const char *type,const char *filename, std::string p){
-    bool flowParent = true;
-    bool flowHead   = true;
+void Juxtapose::compareBothValidFiles(MetaDataFOS_S* pmd, MetaDataFOS_S* cmd,std::string  p) {
 
-    FILE *parent  = fopen(sign1,"r");
-    if (!parent) {
-        fclose(parent); 
-        flowParent = false;
+    FILE *fptr1 = fopen(path.getFlowerPath(pmd->signature).string().c_str(), "r");
+    if(!fptr1)
+        printf("invalide file path");
+
+    FILE *fptr2 = fopen(path.getFlowerPath(cmd->signature).string().c_str(), "r");
+    if(!fptr2)
+        printf("invalide file path");
+    char pstr[1024] = {0};
+    char cstr[1024] = {0};
+    int lineNb = 0;
+    FILE_S *file = FILE_createFile(pmd->fostype,pmd->fosname, p.c_str()); 
+    while (true) {
+        bool flowParent = (fgets(pstr, sizeof(pstr), fptr1) != NULL);
+        bool flowHead = (fgets(cstr, sizeof(cstr), fptr2) != NULL);
+
+        if (!flowParent && !flowHead) {
+            break;
+        }
+
+        if (!flowParent) pstr[0] = '\0';
+        if (!flowHead)   cstr[0] = '\0';
+
+        if (strcmp(pstr, cstr) != 0) {
+            LINE* line = LINE_init(lineNb, pstr, cstr);
+            FILE_AddLine(file, line);
+        }
+
+        lineNb++;
     }
-    FILE *head  = fopen(sign2,"r");
-    if (!head) {
-        fclose(head); 
-        flowHead   = false;
-    }
-    char pstr[1024];
-    char cstr[1024];
-    int lineNb=0;
-    FILE_S *file = FILE_createFile(type, filename, p.c_str());
-    while(true){
+    FILE_READ(file);
+    fclose(fptr1);
+    fclose(fptr2);
+}
 
-        flowParent = (fgets(pstr, sizeof(pstr), parent) != NULL);
-        flowHead   = (fgets(cstr, sizeof(cstr), head)   != NULL);
 
-        if(flowParent= false) pstr[0]='\0';
-        if(flowHead= false)   cstr[0]='\0';
 
-        if(!flowParent && !flowHead){lineNb++; break;} 
+void Juxtapose::compareSingleValidFile(MetaDataFOS_S* md, bool isParent, std::string p) {
+    FILE *fptr = fopen(path.getFlowerPath(md->signature).string().c_str(), "r");
+    if(!fptr)
+        printf("invalide file path");
 
-        if(strcmp(pstr,cstr)!=0){
-            LINE * line = LINE_init(lineNb,pstr,cstr);  
+    char buffer[1024] = {0};
+    int lineNb = 0;
+    FILE_S *file = FILE_createFile(md->fostype,md->fosname, p.c_str()); 
+
+
+    while (fgets(buffer, sizeof(buffer), fptr) != NULL) {
+        if (isParent) {
+            LINE* line = LINE_init(lineNb, buffer, "");
+            FILE_AddLine(file, line);
+        } else {
+            LINE* line = LINE_init(lineNb, "", buffer);
             FILE_AddLine(file, line);
         }
         lineNb++;
     }
     FILE_READ(file);
-    root.add(file);
-    fclose(parent);
-    fclose( head );
+    fclose(fptr);
 }
-
-
-
-
-void Juxtapose::fillqueues(FOS_MD_QUEUE& fos, const char *sign1){
-
-    FILE *parent  = fopen(sign1,"r");
-    if (!parent) {
-        fclose(parent); 
-        throw std::runtime_error("Failed to open file: parent");
-    }
-
-    std::vector<MetaDataFOS_S> tempVec;
-    char parentOut[200];
-    while((fgets(parentOut, sizeof(parentOut), parent) != NULL)){
-        MetaDataFOS_S md = MetaDataFOS_init(parentOut); 
-        tempVec.push_back(md);
-    }
-
-    std::sort(tempVec.begin(), tempVec.end(), [](const MetaDataFOS_S& a, const MetaDataFOS_S& b) {
-        return a.fosname < b.fosname;
-    });
-
-    for (const auto& elem : tempVec) {
-        fos.addToQueue(elem);
-    }
-}
-
-
-
-
-
-
 
 
 

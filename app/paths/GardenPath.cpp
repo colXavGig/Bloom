@@ -6,7 +6,10 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-
+fs::path GardenPath::getIndexFilepath() {
+    return getGardenPath() / "index";
+  }
+  
 GardenPath::GardenPath(string root) {
     this->root = fs::path(root);
 }
@@ -44,3 +47,4 @@ std::string GardenPath::signaturePath(std::string signature){
     }   
     return  (folder+"/"+file);
 }
+

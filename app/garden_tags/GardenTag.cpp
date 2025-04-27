@@ -11,7 +11,6 @@ using namespace std;
         
 //setters
 string GardenTag::getHash() {
-
     return value->signature;
 }
 
@@ -30,9 +29,24 @@ GardenTag_s *GardenTag::getStructValue() {
   return value;
 }
 
+/**
+ * DANGEROUS FUNCTION 
+ * 
+ * 
+ * 
+ */
+string GardenTag::getparentSignature(){
+  if (string(value->parent_signature).empty())
+    return "";
+  return value->parent_signature;
+}
 /////////////////////////////////////////////
 ///                PRIVATE                ///
 /////////////////////////////////////////////
+
+void GardenTag::setparentSignature(string parentSignature){
+  strcpy(value->parent_signature, parentSignature.c_str());
+}
 
 void GardenTag::setRoot(FolderNode *root) {
   LOG("Setting root...");
@@ -58,3 +72,25 @@ void GardenTag::setMessage(string message) {
   strcpy(value->message, message.c_str());
 }
 
+GardenTag::GardenTag(fs::path path) {
+  value = new GardenTag_s();
+  std::ifstream in(path);
+
+  if (!in) {
+      throw std::runtime_error("Failed to open tag file: " + path.string());
+  }
+  std::string line;
+  while (std::getline(in, line)) {
+      if (line.rfind("[PARENT]", 0) == 0) {
+          std::string content = line.substr(9); 
+          setparentSignature(content);
+      } else if (line.rfind("[MSG]", 0) == 0) {
+          std::string content = line.substr(6);
+          setMessage(content);
+      } else if (line.rfind("[TREE]", 0) == 0) {
+          std::string content = line.substr(7); 
+          setSignature(content);
+      }
+  }
+  cout << this->getHash()<<"\n";
+};

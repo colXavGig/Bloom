@@ -23,11 +23,25 @@ MetaDataFOS_S MetaDataFOS_init(char*);
 void MetaDataFOS_free( MetaDataFOS_S* md);
 void MetaDataFOS_text(MetaDataFOS_S* md);
 
-static inline MetaDataFOS_S MetaDataFOS_S_Invalid() {
+//NULL State
+static inline MetaDataFOS_S MetaDataFOS_S_NULLSTATE() {
     MetaDataFOS_S metadata;
-    metadata.fostype = NULL;
-    metadata.signature = NULL;
-    metadata.fosname = NULL;
+    metadata.fostype   = nullptr;
+    metadata.signature = nullptr;
+    metadata.fosname   = nullptr;
     return metadata;
 }
+
+static inline bool MetaDataFOS_S_isEmpty(const MetaDataFOS_S* md) {
+    return (md == nullptr) ||
+    (md->fostype == nullptr && md->signature == nullptr && md->fosname == nullptr);
+}
+
+static inline int safe_strcmp(const char* a, const char* b) {
+    if (a == nullptr && b == nullptr) return 0;
+    if (a == nullptr) return -1;
+    if (b == nullptr) return 1;
+    return strcmp(a, b);
+}
+
 #endif

@@ -21,11 +21,11 @@ class HashTree {
         void listBranches(FolderNode* parent);
 
         FolderNode* getRoot() const {
-            return new FolderNode(root);
+            return root;
         }
 
     private:
-        HashNode_s *root;
+        FolderNode *root;
         void createProjectTree(FolderNode *parentNode);
         /**
          * permet de recreer un HashTree a partir du .garden pas concret mais experimental

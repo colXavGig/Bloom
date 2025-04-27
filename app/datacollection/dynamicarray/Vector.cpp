@@ -1,5 +1,4 @@
 #include "Vector.h"
-
 /** 
 * initialisation du vector capacite automatique mit a 5.
 * Donc pour le data on malloc capacite * taille de ce qu'on veut alloc 

@@ -1,5 +1,5 @@
 #pragma once
-
+#include<string.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -7,13 +7,17 @@ extern "C" {
 
 typedef struct {
   char signature[41];
-  char name[];
+  char *name;
 } Branch;
 
-typedef struct {
-    char *current_branch;
+typedef struct Index_s{
+    Branch *current_branch; // point a une des branches
     Branch *branch_heads;
+    int num_branches;
+
 } Index_s;
+
+
 
 #ifdef __cplusplus
 }

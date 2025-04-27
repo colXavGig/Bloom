@@ -5,6 +5,7 @@
 #include "GardenTag_struct.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
+#include <fstream>
 
 using namespace std;
 namespace  fs =  std::filesystem;
@@ -21,16 +22,23 @@ public:
      * Construct a GardenTag with the specified roo
      * @param tree the tree that the tag should point to
      * @param msg the message recorded by the user to explain the changed in the repo
+     * @param parentsignature signature du tag precedent
      */
-    GardenTag(HashTree *tree, string msg)
+    GardenTag(HashTree *tree, string msg, string parentsignature)
     {
         value = new GardenTag_s();
         setRoot(tree->getRoot());
         setMessage(msg);
         value->timestamp = time(NULL);
         generateSignature();
+        setparentSignature(parentsignature);
     };
 
+    /**
+     * constructor for the garden
+     */
+    GardenTag(fs::path path);
+    
     GardenTag(GardenTag_s *value) {
       this->value = value;
     }
@@ -51,7 +59,8 @@ public:
     FolderNode* getRoot(){
         return new FolderNode(value->root);
     }
-
+    void setparentSignature(string parentSignature);
+    string getparentSignature();
     GardenTag_s *getStructValue();
 
     operator GardenTag_s *() const {
@@ -61,9 +70,9 @@ public:
 
     private:
         GardenTag_s *value;
-
         void setRoot(FolderNode *root);
         void generateSignature();
         void setSignature(string signature);
         void setMessage(string message);
+        
 };

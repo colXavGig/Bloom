@@ -2,14 +2,14 @@
 
 #include "../../processes/Hashing.h"
 
-#define LOGGER_STATUS LOGGER_INACTIVE
+#define LOGGER_STATUS LOGGER_ACTIVE
 #include "../../debugging.h"
     /*
     Constructeur prends une directory
     et copy le filesystem a partir.
     */
     HashTree::HashTree(FolderNode *r){
-        root = r->getStructValue();
+        root = r;
         createProjectTree(getRoot());
     }
 
@@ -22,19 +22,23 @@
     pour faire la sauvegarde. 
     */
     void HashTree::createProjectTree(FolderNode *parentNode){
-        
-        LOG(("Creating a folder: " + parentNode->getFileName()).c_str());
-        LOG(("Path: " + parentNode->getPath().string()).c_str());
+                                                                                                                        LOG("");
+                                                                                                                        LOG(("Creating a folder: " + parentNode->getFileName()).c_str());
+                                                                                                                        LOG(("Path: " + parentNode->getPath().string()).c_str());
         for(const auto &entry: fs::directory_iterator(parentNode->getPath())){
-        LOG(("Entry: " + entry.path().string()).c_str());
+                                                                                                                        LOG(("Entry: " + entry.path().string()).c_str());
             if(entry.path().filename() ==".garden") { continue; } // faut creer une classe ignore pour ignorer certain folder
 
             if(fs::is_regular_file(entry)){
+                                                                                                                        LOG("");
                 FileNode *fileNode =  new FileNode(entry);
-                LOG(("Creating a file: " + fileNode->getPath().string()).c_str());
+
+                LOG(("Generated signature: " + fileNode->getSignature() ).c_str());
+                
                 parentNode->addfile(fileNode);
-                LOG("File asigned as parent node...");
+                                                                                                                        LOG("");
             } else if(fs::is_directory(entry)) {
+                                                                                                                        LOG("File asigned as parent node...");
                 FolderNode *folderNode =  new FolderNode(entry);
                 createProjectTree(folderNode);
                 parentNode->addfolder(folderNode);
@@ -46,10 +50,7 @@
     }
 
 
-    void HashTree::createGardenTree(GardenTag_s *parentNode){
-        root = parentNode->root;
-        // TODO: iterate into the cast to generate the tree
-    }
+
 
 
 

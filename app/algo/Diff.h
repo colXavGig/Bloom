@@ -14,4 +14,6 @@ class Diff{
         void add(FILE_S *f);//file is in the heap
 
         bool tryRead(FILE_S out);
+
+        void readAll();
 };

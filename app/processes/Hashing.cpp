@@ -11,17 +11,24 @@
     chercher un char 
     assurer qu'il n'est pas EOF
 */
-int getline(FILE* fptr,unsigned char *hash){ 
 
-    unsigned char line[LINE_SIZE];
-    int i=0,c;
-    while((c=fgetc(fptr)) != EOF && c !='\n'){
-        line[i++]=c;
+    int getlineHash(FILE* fptr, unsigned char* hash) { 
+        unsigned char line[LINE_SIZE];
+        int i = 0;
+        int c;
+    
+        while ((c = fgetc(fptr)) != EOF && c != '\n') {
+            line[i++] = c;
+        }
+        line[i] = '\0';
+    
+        if (i > 0 || c == '\n') {
+            SHA1(line, strlen((char*)line), hash);
+            return TRUE;
+        }
+    
+        return FALSE;
     }
-    line[i]='\0';
-    SHA1(line,strlen((char*)line),hash);
-    return (c != EOF) ? TRUE : FALSE;
-}
 
 /*
     Fonction qui convertit hash to string
@@ -55,7 +62,7 @@ int fileHash(const char *filename,char* buffer){
     }
     //initialisation du data
     HashVector_init(&vec);  
-    while(getline(fptr,hash)){
+    while(getlineHash(fptr,hash)){
         HashVector_pushback(&vec,hash);
     }
     fclose(fptr);

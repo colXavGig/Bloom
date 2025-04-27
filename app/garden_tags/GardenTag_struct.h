@@ -14,6 +14,7 @@ typedef struct GardenTag_s {
     char *signature;
     time_t timestamp;
     HashNode_s *root;
+    char parent_signature[41];
 } GardenTag_s;
 
 #ifdef __cplusplus

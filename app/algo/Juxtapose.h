@@ -1,11 +1,9 @@
 #pragma once
-
-#include "Stack/FunctionStack.h"
-#include "FOS/MetaData.h"
+#include "../FOS/FOS_metadata.h"
 #include "FOS/FILE_S.h"
 #include "diff.h"
 #include "../paths/GardenPath.h"
-#include "FOS/FOS_MD_QUEUE.cpp"
+#include "FOS_MD_QUEUE.cpp"
 #include <stdio.h>
 #include <string>
 #include<iostream>

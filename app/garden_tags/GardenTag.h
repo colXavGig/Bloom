@@ -1,11 +1,11 @@
 #pragma once
-
 #include <iostream>
 #include <string>
 #include "GardenTag_struct.h"
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
 #include <fstream>
+#include "../GardenProtocol/GardenProtocol.h"
 
 using namespace std;
 namespace  fs =  std::filesystem;

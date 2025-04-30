@@ -10,7 +10,7 @@ typedef struct {
   char *name;
 } Branch;
 
-typedef struct Index_s{
+typedef struct{
     Branch *current_branch; // point a une des branches
     Branch *branch_heads;
     int num_branches;

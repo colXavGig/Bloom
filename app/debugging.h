@@ -15,6 +15,8 @@
 #if LOGGER_STATUS == LOGGER_ACTIVE
     /** Logger active - will print line into the console */
     #define LOG(...) puts(__VA_ARGS__)
+
+    #define LOG_PATH()
 #else
     /** Logger inactive - will be replaced by empty space */
     #define LOG(...);

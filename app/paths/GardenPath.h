@@ -24,7 +24,7 @@ class GardenPath {
         fs::path getIndexFilepath();
 
         static std::string signaturePath(std::string signature);
-
+        fs::path getTestingPath();
 };
 
 

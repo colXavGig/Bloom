@@ -2,9 +2,12 @@
 
 #include <string>
 #include <filesystem>
+#include <fstream>
 #include "Index_struct.h"
+#include "../GardenProtocol/GardenProtocol.h"
 using namespace std;
 namespace  fs =  std::filesystem;
+
 /**
 * L'Index est un fichier dans '.garden' contenant un pointer vers
 * la branch courante ou le commit courrante.
@@ -44,20 +47,27 @@ class Index {
         operator Index_s &();
         operator Index_s *();
 
+
+        //getter
+        string getHash();
+        string getName();
+
+        string getBranchHash(int x);
+        string getBranchName(int x);
         //commit event
         void commit(const string& signature);
-        string getSignature();
-
         //branch functions
-        void setCurrentBranch(const string& name);
+        void changeBranch(const string& name);
         void createNewBranch(const string& name,const string& signature);
+        
     private:
         Index_s *value;
         fs::path path;
 
         void init(fs::path path);
+        
+        vector<string> setCurrentBranch(ifstream &ifs);
 
-        string readToken(char **line);
         Branch *createBranch(const string& branch_name, const string& signature);
 };
 

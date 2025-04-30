@@ -1,10 +1,10 @@
 #include <vector>
 #include "stdio.h"
 #include "../paths/GardenPath.h"
-#include "../algo/FOS/MetaData.h"
+#include "../FOS/FOS_metadata.h"
 #include <vector>
 #include <fstream>
-typedef void (*WalkCallback)(MetaDataFOS_S* entry, const std::string& fullPath, void* context);
+typedef void (*WalkCallback)(FOS_metadata* entry, std::string fullPath, void* context);
 
 class Navigation{
     private:
@@ -16,5 +16,5 @@ class Navigation{
         Navigation(GardenPath* path);
         ~Navigation();
     void walk(const std::string& treeHash, WalkCallback callback, void *context);
-    void walkFolder(const std::string& folderHash, const std::string& path, WalkCallback callback, void *context);
+    void walkFolder(const std::string& folderHash, std::string path, WalkCallback callback, void *context);
 };

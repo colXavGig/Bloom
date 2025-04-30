@@ -5,7 +5,7 @@
 #include "../datacollection/hashTree/HashNode.h"
 #include "../datacollection/hashTree/HashTree.h"
 #include "../garden_tags/GardenTag.h"
-
+#include "../GardenProtocol/GardenProtocol.h"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -39,7 +39,6 @@ private:
      * @param current the node to add into .garden/
      */
     void createGarden(FolderNode *current);
-    void createFileStructure(string s,string &folder,string &file);
     void savingFile(const FileNode *node); //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
     void savingFolder(const FolderNode *node);
     /**

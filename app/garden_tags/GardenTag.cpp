@@ -6,12 +6,12 @@
 #include "../debugging.h"
 
 using namespace std;
-
+using GP = gp::GardenProtocol;
 
         
 //setters
 string GardenTag::getHash() {
-    return value->signature;
+    return value->Hash;
 }
 
 string GardenTag::getRootHash() {
@@ -36,16 +36,17 @@ GardenTag_s *GardenTag::getStructValue() {
  * 
  */
 string GardenTag::getparentSignature(){
-  if (string(value->parent_signature).empty())
+  if (string(value->parentHash).empty())
     return "";
-  return value->parent_signature;
+  return value->parentHash;
 }
 /////////////////////////////////////////////
 ///                PRIVATE                ///
 /////////////////////////////////////////////
 
-void GardenTag::setparentSignature(string parentSignature){
-  strcpy(value->parent_signature, parentSignature.c_str());
+void GardenTag::setparentSignature(string parentHash){
+  strncpy(value->parentHash, parentHash.c_str(), sizeof(value->parentHash) - 1);
+  value->parentHash[40] ='\0';
 }
 
 void GardenTag::setRoot(FolderNode *root) {
@@ -55,15 +56,15 @@ void GardenTag::setRoot(FolderNode *root) {
 
 void GardenTag::generateSignature() {
     LOG("Generating signature...");
-    value->signature = new char[41];
-    tagHashing(value, (char(*)[41])value->signature);
+    value->Hash = new char[41];
+    tagHashing(value, (char(*)[41])value->Hash);
     LOG("Signature generated!");
 }
 
 void GardenTag::setSignature(string signature) {
   LOG("Setting signature...");
-  value->signature = new char[signature.length()+1];
-  strcpy(value->signature, signature.c_str());
+  value->Hash = new char[signature.length()+1];
+  strcpy(value->Hash, signature.c_str());
 }
 
 void GardenTag::setMessage(string message) {
@@ -75,22 +76,22 @@ void GardenTag::setMessage(string message) {
 GardenTag::GardenTag(fs::path path) {
   value = new GardenTag_s();
   std::ifstream in(path);
-
   if (!in) {
       throw std::runtime_error("Failed to open tag file: " + path.string());
   }
+
   std::string line;
   while (std::getline(in, line)) {
-      if (line.rfind("[PARENT]", 0) == 0) {
-          std::string content = line.substr(9); 
-          setparentSignature(content);
-      } else if (line.rfind("[MSG]", 0) == 0) {
-          std::string content = line.substr(6);
-          setMessage(content);
-      } else if (line.rfind("[TREE]", 0) == 0) {
-          std::string content = line.substr(7); 
-          setSignature(content);
-      }
+    if(line.size()==0)break;
+    vector<string> vec = GP::GardenDecode(line);
+    if(vec.size()<2){
+      throw runtime_error("invalid amount of data in GardenTag");
+    }
+    const std::string& tag = vec[0];
+    
+    if      (tag == "[PARENT]") setparentSignature(vec[1]);
+    else if (tag == "[MSG]")    setMessage(vec[1]);
+    else if (tag == "[TREE]")   setSignature(vec[1]);
+    else throw std::runtime_error("Unrecognized tag in GardenTag: " + tag);
+    }    
   }
-  cout << this->getHash()<<"\n";
-};

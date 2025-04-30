@@ -11,10 +11,10 @@ extern "C" {
 
 typedef struct GardenTag_s {
     char *message;
-    char *signature;
+    char *Hash;
     time_t timestamp;
     HashNode_s *root;
-    char parent_signature[41];
+    char parentHash[41];
 } GardenTag_s;
 
 #ifdef __cplusplus

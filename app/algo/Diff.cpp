@@ -1,16 +1,31 @@
 #include "Diff.h"
-
-void Diff::add(FILE_S *f){
-    if(size == capacity){
-        capacity *=2;
-        diff = (FILE_S*)realloc(diff,capacity * sizeof(FILE_S));
-
-        if(!diff)throw new std::bad_alloc;   
+void Diff::ensureCapacity() {
+    if (size >= capacity) {
+        capacity *= 2;
+        diff = static_cast<Block*>(realloc(diff, capacity * sizeof(Block)));
     }
-    diff[size++]=*f;
+}
+void Diff::ADDED(const Block& b) {
+    ensureCapacity();
+    diff[size++] = b; // shallow copy
+    std::cout << "[+ADDED] " << b.title << "\n";
 }
 
-bool Diff:: tryRead(FILE_S out){
+void Diff::REMOVED(const Block& b) {
+    ensureCapacity();
+    diff[size++] = b;
+    std::cout << "[-REMOVED] " << b.title << "\n";
+}
+
+void Diff::MODIFIED(const Block& b) {
+    ensureCapacity();
+    diff[size++] = b;
+    std::cout << "[~MODIFIED] " << b.title << "\n";
+}
+
+
+
+bool Diff:: tryRead(Block& out){
     if(size < 0)
         return false;
     out = diff[size--];
@@ -18,18 +33,7 @@ bool Diff:: tryRead(FILE_S out){
 }
 
 void Diff::readAll() {
-    for (int i = 0; i < size; ++i) {
-        FILE_S file = diff[i];
-
-
-        printf("File: %s, Type: %s\n", file.filename, file.type);
-
-  
-        for (int j = 0; j < file.size; ++j) {
-            LINE line = file.contained[j];
-            printf("Line %d: Parent[%s] Head[%s]\n", j, line.diff[0], line.diff[1]);
-        }
-
-        printf("\n"); 
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << "Block [" << diff[i].startLine << "-" << diff[i].endLine << "]: " << diff[i].title << "\n";
     }
 }

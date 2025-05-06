@@ -1,40 +1,42 @@
 #include "fileBuilder.h"
-#define TESTINGPATH "app\\testing\0"
-#define LOGGING_STATUS LOGGER_ACTIVE
-#include "../debugging.h"
-#define LOG_PATH(p) LOG((std::filesystem::absolute(p)).string().c_str())
 #include <iostream>
 
-FileBuilder::FileBuilder(GardenPath* path): gardenpath(path),nav(gardenpath){}
+#define LOGGER_STATUS LOGGER_ACTIVE
+#include "../debugging.h"
+
+#define LOG_PATH(p) LOG((std::filesystem::absolute(p)).string().c_str())
+#define TESTINGPATH "app\\testing\0"
+
+
+using SP = staticpath::_staticPath;
+using namespace std;
 
 
 void FileBuilder::build(const std::string& treeHash) {
-    nav.walk(treeHash, fileBuilderCallback,this);  
+    nav.walk(treeHash, fileBuilderCallback);  
 }
 
-void FileBuilder::fileBuilderCallback(FOS_metadata* entry, std::string fullPath, void* context) {
-std::cout<< fullPath;
-    FileBuilder* builder = static_cast<FileBuilder*>(context);
+void FileBuilder::fileBuilderCallback(FOS_metadata* entry, std::string fullPath) {
 
-    fs::path dest = fs::absolute(fs::path("app\\testing")/fullPath).lexically_normal();
-    std::cout << "Creating: " << dest << std::endl;
+    LOG("in fileBuilderCallBack");
+    fs::path src = SP::_TESTPATH();
+    fs::path dest = (src / fullPath).lexically_normal();
+
     if (entry->getType() == "[FOLDER]") {
         fs::create_directories(dest);
     } 
-    
     else if (entry->getType() == "[FILE]"){
+        LOG(("\t"+entry->getName()).c_str());
+        fs::path filePath = SP::_SEEDROOT(entry->getHash());
 
-        fs::path filePath = builder->gardenpath->getFlowerPath(entry->getHash());
-        filePath = fs::absolute(filePath.lexically_normal().make_preferred());
-        std::cout << "Creating: " << filePath << std::endl;
         fs::create_directories(dest.parent_path());
         if (fs::exists(filePath)) {
+
             fs::copy(filePath, dest, fs::copy_options::overwrite_existing);
         } else {
-
-            std::cerr << "Missing file in garden store: " << filePath << std::endl;
+            cerr << "Missing file in garden store: " << filePath << "\n";
         }
-        std::cout <<"here";
+        cout <<"here";
     }
 }
 

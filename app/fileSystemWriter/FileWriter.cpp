@@ -1,30 +1,68 @@
 #include "FileWriter.h"
 #include <string.h>
-#define LOGGER_STATUS LOGGER_ACTIVE
+#define LOGGER_STATUS LOGGER_INACTIVE
 #include "../debugging.h"
 
 
 
 using GP = gp::GardenProtocol;
 
-/**
- *
- * @return return le hash du tag
- */
-string fileWriter::writeToFile(HashTree *tree, string commit_msg, string parentsignature) {
-    LOG(" ");
-    LOG(" ");
-    LOG("Starting to write tree to file...");
-    this->createGarden(tree->getRoot());
-    LOG("Garden seeds saved!");
-    return this->savingGardenTag(tree, commit_msg, parentsignature);
+string fileWriter::init(HashTree *tree, string commit_msg, Index *index) {    
+    //TODO create a class to manage commits and rollback 
+    //TODO creation de bon message d'erreur
+    // :: si c'est deja init couper operation que rien seras enregistrer (pour l'instant rien s'enregistre)
+    try {
+        
+        GardenTag tag = GardenTag(tree->getRoot()->getSignature(),commit_msg,"FIRST");
+
+        tag.write();
+        cout<<"hello "<<tag.getTagHash();
+        index->init(tag.getTagHash());
+
+        createGarden(tree->getRoot());    
+    } catch(const exception& e) {
+        cerr<< e.what();
+        return"";
+    }
+    return "succes";
 }
 
+
+string fileWriter::commit(HashTree *tree, string commit_msg, Index *index) {
+    
+    //TODO create a class to manage commits and rollback 
+    //TODO creation de bon message d'erreur
+    // :: si le commit precedent a le meme hash avertir que rien seras enregistrer (pour l'instant rien s'enregistre)
+    try {
+        cout<<tree->getRoot()->getSignature()+"\n";
+        GardenTag tag = GardenTag(tree->getRoot()->getSignature(),commit_msg,index->getTagHash());
+
+        tag.write();
+     
+        createGarden(tree->getRoot());
+
+        index->updateHeadHash(tag.getTagHash());
+    } catch(const exception& e) {
+        cerr<< e.what();
+        return"";
+    }
+    return "succes";
+}
+void fileWriter::createGarden(FolderNode *current){
+
+    for(FileNode* node : current->getFiles()){
+        savingFile(node);
+    }
+    for(FolderNode* node : current->getFolders()){
+        createGarden(node);
+    }
+    savingFolder(current);
+}   
 
 void fileWriter::savingFile(const FileNode *node){
     
     //create fold
-    fs::path path = gardenpath->getFlowerPath(node->getSignature());
+    fs::path path =SP::_SEEDROOT(node->getSignature());
 
     fs::create_directories(path.parent_path());
     if(!fs::exists(path)){
@@ -43,8 +81,7 @@ void fileWriter::savingFile(const FileNode *node){
 //     Folder  asdfhsdfs   subdir
 void fileWriter::savingFolder(const FolderNode *node){
 
-    string folder,file;
-    fs::path path = gardenpath->getFlowerPath(node->getSignature());
+    fs::path path = SP::_SEEDROOT(node->getSignature());
 
     fs::create_directories(path.parent_path());
     ofstream ofs(path);
@@ -57,47 +94,7 @@ void fileWriter::savingFolder(const FolderNode *node){
         ofs<< GP::GardenEncode({"[FOLDER]",folder->getSignature(),folder->getFileName()})<<"\n";
     }
 }
-/**
- * patch retourne gardentag mais je pense pas que c'est trop bon
- * 
- * 
- */
-string fileWriter::savingGardenTag(HashTree *tree, string tag_msg,string parentsignature ){
-                                                                                            LOG("Saving garden tag...");
-    GardenTag tag = GardenTag(tree, tag_msg, parentsignature);
-                                                                                            LOG("Garden tag created!");
-       
-    //creation du path                                                                                     LOG("Garden seeds saved!");                                                                                       LOG(("Creating fs structure with hash: " + tag.getHash()).c_str());
-    fs::path path = gardenpath->signaturePath(tag.getHash());                                                                                         LOG("FileStructure generated!"); 
-    fs::path targetPath = this->gardenpath->getTagPath()/path;
-                                                                                            LOG(("Making sure "+ targetPath.string() +" exists...").c_str());
-
-    if (fs::exists(targetPath)) {
-        LOG(("Tag already exists at: " + targetPath.string()).c_str());
-        return tag.getHash();
-    }
-    fs::create_directories(targetPath.parent_path());
-    std::ofstream outFile(targetPath);
-    
-    outFile <<GP::GardenEncode({"[PARENT]", tag.getparentSignature()})<<"\n";
-    outFile <<GP::GardenEncode({"[MSG]",    tag.getMessage()})<<"\n";
-    outFile <<GP::GardenEncode({"[TREE]",   tag.getRootHash()})<<"\n";
-    outFile <<std::endl;
-
-    outFile.close();
-                                                                                            LOG(("root hash: "+tag.getHash()).c_str());
-    return tag.getHash();
-}
 
 
-void fileWriter::createGarden(FolderNode *current){
 
-    for(FileNode* node : current->getFiles()){
-        savingFile(node);
-    }
-    for(FolderNode* node : current->getFolders()){
-        createGarden(node);
-    }
-    savingFolder(current);
-}   
 

@@ -12,57 +12,47 @@ else
 	FIXPATH = $1
 endif
 
-# Compiler settings
-root=./app
-build=$(root)/build
-CXX := g++
-CXXFLAGS := -Wall -I"C:/mingw64/include" -I"C:/dev/curl-8.13.0_2-win64-mingw/include"
-LDFLAGS := -L"C:/mingw64/lib/MT" -L"C:/dev/curl-8.13.0_2-win64-mingw/lib" -lssl -lcrypto -lcurl
-#folder objects
-obj_algo := DIFF.o JUXTAPOSE.o
-
-objet_POD:= FOS_METADATA.o FOS_FILE_S.o
-
-obj_dataCollection := StringVector.o HashNode.o HashTree.o
-
-obj_GardenManipulation := FileWriter.o FileBuilder.o Navigation.o GardenProtocol.o
-
-obj_garden_tags := GardenTag.o
-
-obj_paths := GardenPath.o 
-
-obj_process := Hashing.o 
-
+# Paths
+root := ./app
+build := $(root)/build
 bin := main.exe
 
-all: main.exe
-## $(obj_dataCollection)
-##$(build)/DIFF.o 
-##$(build)/JUXTAPOSE.o 
-main.exe: $(obj_GardenManipulation)  $(obj_garden_tags) $(obj_paths) $(obj_process) $(objet_POD) Index.o main.o
+# Compiler
+CXX := g++
+CXXFLAGS := -Wall -std=c++17 "-IC:/mingw64/include" 
+LDFLAGS := -L"C:/mingw64/lib/MT" -lssl -lcrypto 
 
+# Object files
+obj_POD := FOS_METADATA.o FOS_FILE_S.o
+obj_GardenManipulation := FileWriter.o FileBuilder.o Navigation.o
+obj_paths := GardenPath.o
+
+obj_filesystem := \
+	$(root)/fileSystemManagement/build/Index.o \
+	$(root)/fileSystemManagement/build/GardenTag.o \
+	$(root)/fileSystemManagement/build/GardenProtocol.o \
+	$(root)/fileSystemManagement/build/HashTree.o \
+	$(root)/fileSystemManagement/build/HashNode.o \
+	$(root)/fileSystemManagement/build/Index_c_api.o \
+	$(root)/fileSystemManagement/build/GardenTag_c_api.o \
+	$(root)/fileSystemManagement/build/Hashing.o \
+	$(root)/fileSystemManagement/build/HashVector.o \
+	$(root)/fileSystemManagement/build/StaticPath.o
+
+# Submodules
+SUBDIRS := app/fileSystemManagement
+
+.PHONY: all $(SUBDIRS) clean
+
+all: $(SUBDIRS) $(bin)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
+
+# Build the final executable
+$(bin): $(obj_filesystem) $(addprefix $(build)/, main.o $(obj_POD) $(obj_GardenManipulation) $(obj_paths))
 	@echo Detected OS: $(detected_OS)
-	g++ $(build)/main.o \
-	$(build)/FOS_FILE_S.o \
-	$(build)/FOS_METADATA.o \
-	$(build)/HashTree.o \
-	$(build)/HashNode.o \
-	$(build)/StringVector.o \
-	$(build)/FileWriter.o  \
-	$(build)/FileBuilder.o  \
-	$(build)/Navigation.o  \
-	$(build)/GardenProtocol.o \
-	$(build)/Hashing.o \
-	$(build)/GardenPath.o \
-	$(build)/GardenTag.o \
-	$(build)/Index.o \
-	-Wall \
-	-I"C:/mingw64/include" \
-	-I"C:/dev/curl-8.13.0_2-win64-mingw/include" \
-	-L"C:/mingw64/lib/MT" \
-	-L"C:/dev/curl-8.13.0_2-win64-mingw/lib" \
-	-lssl -lcrypto  \
-	-o main.exe
+	$(CXX) $^ -o $@ $(LDFLAGS)
 
 
 # TODO: delete if not used
@@ -71,15 +61,13 @@ main.exe: $(obj_GardenManipulation)  $(obj_garden_tags) $(obj_paths) $(obj_proce
 ##===============================================================================##
 ##			                   algo folder     									 ##
 ##===============================================================================##
-FOS_FILE_S.o: $(call FIXPATH,$(root)/FOS/FILE_S.cpp)
+$(build)/FOS_FILE_S.o: $(root)/FOS/FILE_S.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/FOS/FILE_S.cpp) -o $(call FIXPATH,$(build)/FOS_FILE_S.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-FOS_METADATA.o: $(call FIXPATH, $(root)/FOS/FOS_metadata.cpp)
+$(build)/FOS_METADATA.o: $(root)/FOS/FOS_metadata.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/FOS/FOS_metadata.cpp) -o $(call FIXPATH,$(build)/FOS_METADATA.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 DIFF.o: $(call FIXPATH, $(root)/algo/Diff.cpp)
 	@echo "making $@..."
@@ -90,80 +78,34 @@ JUXTAPOSE.o: $(root)/algo/Juxtapose.cpp
 	@echo "making $@..."
 	g++ -c $(call FIXPATH,$(root)/algo/Juxtapose.cpp) -o $(call FIXPATH,$(build)/JUXTAPOSE.o)
 	@echo
-##===============================================================================##
-##			                   data collection									 ##
-##===============================================================================##
-StringVector.o: $(root)/datacollection/dynamicarray/Vector.cpp
-	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/datacollection/dynamicarray/Vector.cpp) -o $(call FIXPATH,$(build)/StringVector.o)
-	@echo
-
-HashNode.o: $(root)/datacollection/hashTree/HashNode.cpp
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashNode.cpp) -o $(call FIXPATH,$(build)/HashNode.o)
-	@echo
-
-HashTree.o: $(root)/datacollection/hashTree/HashTree.cpp
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/datacollection/hashTree/HashTree.cpp) -o $(call FIXPATH,$(build)/HashTree.o)
-	@echo
 
 
 ##===============================================================================
 ##			                   GardenManipulation
 ##===============================================================================
-FileWriter.o: $(call FIXPATH,$(root)/fileSystemWriter/FileWriter.cpp)
+$(build)/FileWriter.o: $(root)/fileSystemWriter/FileWriter.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileSystemWriter/FileWriter.cpp) -o $(call FIXPATH,$(build)/FileWriter.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 	
-FileBuilder.o: $(call FIXPATH,$(root)/fileSystemBuilder/fileBuilder.cpp)
+$(build)/FileBuilder.o: $(root)/fileSystemBuilder/fileBuilder.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/fileSystemBuilder/fileBuilder.cpp) -o $(call FIXPATH,$(build)/FileBuilder.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-Navigation.o: $(call FIXPATH,$(root)/GardenNavigation/Navigation.cpp)
+$(build)/Navigation.o: $(root)/GardenNavigation/Navigation.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/GardenNavigation/Navigation.cpp) -o $(call FIXPATH,$(build)/Navigation.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-GardenProtocol.o: $(call FIXPATH,$(root)/GardenProtocol/GardenProtocol.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/GardenProtocol/GardenProtocol.cpp) -o $(call FIXPATH,$(build)/GardenProtocol.o)
-	@echo
+
 ##===============================================================================
 ##			                   path
 ##===============================================================================
-GardenPath.o: $(call FIXPATH, $(root)/paths/GardenPath.cpp)
+$(build)/GardenPath.o: $(root)/paths/GardenPath.cpp
 	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/paths/GardenPath.cpp) -o $(call FIXPATH, $(build)/GardenPath.o)
-	@echo
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-##===============================================================================
-##			                   garden tags
-##===============================================================================
-GardenTag.o: $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/garden_tags/GardenTag.cpp) -o $(call FIXPATH,$(build)/GardenTag.o)
-	@echo
-
-##===============================================================================
-##			                   processes
-##===============================================================================
-Hashing.o: $(call FIXPATH, $(root)/processes/Hashing.cpp)
-	@echo "making $@...\n";
-	g++ -c $(call FIXPATH, $(root)/processes/Hashing.cpp) -o $(call FIXPATH, $(build)/Hashing.o)
-	@echo
-
-Index.o: $(call FIXPATH, $(root)/index/Index.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH, $(root)/index/Index.cpp) -o $(call FIXPATH, $(build)/$@)
-	@echo
-
-main.o: $(call FIXPATH,$(root)/main.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/main.cpp) -o $(call FIXPATH,$(build)/main.o)
-	@echo
+$(build)/main.o: $(root)/main.cpp
+	@echo "Compiling main.cpp..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 run: all

@@ -2,10 +2,15 @@
 #include <filesystem>
 #include <fstream>
 #include "../paths/GardenPath.h"
-#include "../datacollection/hashTree/HashNode.h"
-#include "../datacollection/hashTree/HashTree.h"
-#include "../garden_tags/GardenTag.h"
-#include "../GardenProtocol/GardenProtocol.h"
+
+//fileSystem management
+#include "../fileSystemManagement/seed/HashNode.h"
+#include "../fileSystemManagement/seed/HashTree.h"
+#include "../fileSystemManagement/garden_tags/GardenTag.h"
+#include "../fileSystemManagement/index/Index.h"
+#define LOGGER_STATUS LOGGER_ACTIVE
+#include "../debugging.h"
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -15,24 +20,17 @@ namespace fs = std::filesystem;
 */
 class fileWriter {
 public:
-    /**
-     * constructor of the file writer with initialize all the members
-     * @param paths path where .garden is located. Typically the root of the project
-     */
-    fileWriter(GardenPath *paths)/*: tag(node)*/ {
-            this->gardenpath = paths;
-    }
 
+    string init(HashTree *tree, string tag_msg, Index *index);
     /**
      * Write an HashTree into the .garden/ folder of the repo
      * @param tree representing the current repo state
      * @param commit_msg message to keep in the GardenTag
      */
-    string writeToFile(HashTree *tree, string tag_msg, string parentsignature);
+    string commit(HashTree *tree, string tag_msg, Index *index);
 
 private:
-    /** Collection of path for the .garden/ folder */
-    GardenPath *gardenpath;
+
 
     /**
      * create the entry in the .garden/ for the current node
@@ -41,14 +39,6 @@ private:
     void createGarden(FolderNode *current);
     void savingFile(const FileNode *node); //convertit en txt pour l'instant jsp c quoi le meilleur ouvert a des propositions
     void savingFolder(const FolderNode *node);
-    /**
-     * Save the GardenTag into the filesystem
-     * @param tree A pointer to the HashTrww the tag should point to
-     * @param tag_msg The message that describe the commit
-     * @param signature du commit precendent
-     * TODO PATCH RETURN
-     */
-    string savingGardenTag(HashTree *tree, string tag_msg, string parensignature);
 
 };
 

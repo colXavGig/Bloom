@@ -23,7 +23,7 @@ class GardenPath {
         fs::path getGardenTagPath(std::string signature);
         fs::path getIndexFilepath();
 
-        static std::string signaturePath(std::string signature);
+        static std::string _signaturePath(std::string signature);
         fs::path getTestingPath();
 };
 

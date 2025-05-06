@@ -1,19 +1,24 @@
-#include <stdio.h>
-#include "../FOS/FILE_S.h"
-#include <new>  
+#pragma once
+#include "Block.h"
+#include <iostream>
 
 
 class Diff{
     private:
-        FILE_S *diff;
-        size_t size;
-        size_t capacity;
+        std::vector<std::pair<std::string, Block>> diff;
+
     public:
-        Diff():size(0), capacity(5){ diff = (FILE_S*)malloc(capacity * sizeof(FILE_S));}
 
-        void add(FILE_S *f);//file is in the heap
+        void ADDED   (const Block& b){ diff.emplace_back("ADDED", b); };
+        void REMOVED (const Block& b){ diff.emplace_back("REMOVED", b); };
+        void MODIFIED(const Block& b){ diff.emplace_back("MODIFIED", b); };
 
-        bool tryRead(FILE_S out);
 
-        void readAll();
+        bool tryRead(Block& out);
+
+        void readAll(){
+            for (auto& [type, block] : diff) {
+                std::cout << "[" << type << "] " << block.title << "\n";
+            }
+        }
 };

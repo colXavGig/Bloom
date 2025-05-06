@@ -1,3 +1,4 @@
+#pragma once
 #define LOGGER_ACTIVE 1
 #define LOGGER_INACTIVE 0
 

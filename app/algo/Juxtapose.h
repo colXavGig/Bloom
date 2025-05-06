@@ -1,38 +1,34 @@
 #pragma once
 #include "../FOS/FOS_metadata.h"
-#include "FOS/FILE_S.h"
+#include "Block.h"
 #include "diff.h"
 #include "../paths/GardenPath.h"
-#include "FOS_MD_QUEUE.cpp"
 #include <stdio.h>
 #include <string>
 #include<iostream>
+
+
+#include "../fileSystemManagement/utilz/PathManagement/StaticPath.h"
+using SP = staticpath::_staticPath;
 /**
  * class pour comparer deux FileTrees dans le garden
  * il lit le folder file dependament du resultat il enregistre des donne
  */
 class Juxtapose{
     private:
-        GardenPath path= GardenPath(".");
-        FOS_MD_QUEUE parentQueue;
-        FOS_MD_QUEUE headQueue;
+        std::vector<Block> parentBlocks;
+        std::vector<Block> headBlocks;
         //diff list
         Diff root;
     //------------------ helper functions ------------------//
 
-        void parsefolder (std::string path);
-        void parsefile   (std::string path);
-        void fillqueues(FOS_MD_QUEUE& fos, const char *sign1);
+        void loadBlocks(const char* signature, std::vector<Block>& blockList);
     public:   
+        void parseMetadata(const char *sign1, const char *sign2, std::string path);
+        void compareBlocks();
 
-    void parseMetadata(const char *sign1, const char *sign2, std::string path);
-    void compareSingleValidFile(MetaDataFOS_S* md, bool isParent, std::string p);
-    void compareBothValidFiles(MetaDataFOS_S* pmd, MetaDataFOS_S* cmd, std::string p);
-
-
-    void readroot(){
-        root.readAll();
-    }
+        Diff getroot(){ return root; }
+        void readroot(){ root.readAll(); }
 };
 
 

@@ -1,5 +1,7 @@
 #pragma once
 #include<string.h>
+#include<stdlib.h>
+#define HASH_STR_SIZE 41
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,11 +15,13 @@ extern "C" {
  */
 typedef struct {
     char *fostype;
-    char  hash[41];
+    char  hash[HASH_STR_SIZE];
     char *fosname; 
 }metadataFOS_S;
 
+metadataFOS_S *metadata_init(const char* fostype, const char (*hash)[HASH_STR_SIZE], const char *fosname);
 
+void metadata_free(metadataFOS_S *FOS);
 #ifdef __cplusplus
 }
 #endif

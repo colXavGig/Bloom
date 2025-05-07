@@ -26,7 +26,7 @@ $(BUILD):
 
 #garden_tags
 $(BUILD)/GardenTag.o: garden_tags/GardenTag.cpp garden_tags/GardenTag.h garden_tags/GardenTag_struct.h
-	$(CXX) $(CXXFLAGS) -c "$<" -o "$@"
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD)/GardenTag_c_api.o: garden_tags/GardenTag_c_api.c garden_tags/GardenTag_struct.h
 	$(CC) $(CFLAGS) -c $< -o $@

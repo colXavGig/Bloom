@@ -2,42 +2,45 @@
 using namespace std;
 
 
-void Juxtapose::parseMetadata(const char *sign1, const char *sign2, string p){
+void Juxtapose::parseMetadata(const string& sign1, const string& sign2, string p){
     //li le folder file et sort les folders et files
-    std::string p1 =SP::_SEEDROOT(sign1).string();
-    std::string p2 =SP::_SEEDROOT(sign2).string();
+    loadBlocks(sign1.c_str(), parentBlocks);
+    loadBlocks(sign2.c_str(), headBlocks);
 
-
-
-
-    parsefile(p);
-    parsefolder(p);
+    compareBlocks();
 }
 
 void Juxtapose::loadBlocks(const char* signature, vector<Block>& blockList) {
-    ifstream in(SP::_SEEDROOT(signature));
-    string line;
-    string title, body;
-    int startLine = 0, endLine = 0, currentLine = 0;
+    std::ifstream file(SP::_SEEDROOT(signature));
+    if (!file) {
+        throw std::runtime_error("Failed to open file: " + SP::_SEEDROOT(signature).string());
+    }
+
+    std::string line, title, body;
+    int lineStart = 0, lineEnd = 0;
     bool insideBlock = false;
 
-    while (getline(in, line)) {
-        currentLine++;
-        if (!insideBlock && line.find('{') != string::npos) {
-            title = line;
-            startLine = currentLine;
+    while (std::getline(file, line)) {
+        ++lineEnd;
+
+        if (line.find('{') != std::string::npos) {
+
             insideBlock = true;
+            title = line;
             body.clear();
-        }
-        else if (insideBlock) {
+            lineStart = lineEnd;
+        } else if (insideBlock) {
             body += line + "\n";
-            if (line.find('}') != string::npos) {
-                endLine = currentLine;
-                blockList.emplace_back(startLine, endLine, title, body);
+            if (line.find('}') != std::string::npos) {
+ 
+                Block blk(lineStart, lineEnd, title, body);
+                blockList.push_back(blk);
                 insideBlock = false;
             }
         }
     }
+
+    file.close();
 }
 
 void Juxtapose::compareBlocks() {

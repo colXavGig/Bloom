@@ -82,7 +82,7 @@ class Index {
         /**
          * read Index_s
          */
-        void read();  
+        bool read();  
          /**
          * initialise Index_s
          */

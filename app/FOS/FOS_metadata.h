@@ -5,7 +5,7 @@
 #include <cstring>
 #include "stdexcept"
 
-#include "FOS_metadata_struct.cpp"
+#include "FOS_metadata_struct.h"
 #include "../fileSystemManagement/utilz/GardenProtocol/GardenProtocol.h"
 /**
  * une classe qui represente un FOS
@@ -20,10 +20,6 @@ class FOS_metadata {
         FOS_metadata(char *fostype, char *signature, char *fosname);
         ~FOS_metadata();
         
-        //SETTER
-        void setHash(std::string hash);
-        void setType(std::string type);
-        void setName(std::string name);
         //GETTER
         std::string getHash();
         std::string getType();
@@ -32,9 +28,9 @@ class FOS_metadata {
 
         //boolean
         bool isEmpty();
-        bool diffHash(const FOS_metadata& hash);
-        bool difftype(const FOS_metadata& type);
-        int  diffName(const FOS_metadata& type);
+        bool isHashEqual(const FOS_metadata& hash);
+        bool isTypeEqual(const FOS_metadata& type);
+        int  isNameEqual(const FOS_metadata& type);
 
         //formating / print state
         std::string toString();
@@ -47,7 +43,7 @@ class FOS_metadata {
         }
 
         bool operator!=(const FOS_metadata& other) {
-            return !diffHash(other);    
+            return !isHashEqual(other);    
         }
 
         private:   

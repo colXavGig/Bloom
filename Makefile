@@ -1,17 +1,3 @@
-ifeq ($(OS),Windows_NT)
-	detected_OS := Windows
-	RM = del /s /q
-	MKDIR = mkdir
-	CP = copy
-	FIXPATH = $(subst /,\,$1)
-else
-	detected_OS := $(shell uname -s)
-	RM = rm -r
-	MKDIR = mkdir -p
-	CP = cp
-	FIXPATH = $1
-endif
-
 # Paths
 root := ./app
 build := $(root)/build
@@ -22,8 +8,10 @@ CXX := g++
 CXXFLAGS := -Wall -std=c++17 "-IC:/mingw64/include" 
 LDFLAGS := -L"C:/mingw64/lib/MT" -lssl -lcrypto 
 
-# Object files
-obj_POD := FOS_METADATA.o FOS_FILE_S.o
+CC := gcc
+CFLAGS := -Wall -std=c11
+
+obj_POD := FOS_metadata.o FOS_metadata_c_api.o
 obj_GardenManipulation := FileWriter.o FileBuilder.o Navigation.o
 obj_paths := GardenPath.o
 
@@ -39,6 +27,12 @@ obj_filesystem := \
 	$(root)/fileSystemManagement/build/HashVector.o \
 	$(root)/fileSystemManagement/build/StaticPath.o
 
+obj_diff := \
+	$(root)/DiffEngine/build/Block.o \
+	$(root)/DiffEngine/build/Diff.o \
+	$(root)/DiffEngine/build/Juxtapose.o \
+	$(root)/DiffEngine/build/TreeDiff.o 
+
 # Submodules
 SUBDIRS := app/fileSystemManagement
 
@@ -50,36 +44,19 @@ $(SUBDIRS):
 	$(MAKE) -C $@
 
 # Build the final executable
-$(bin): $(obj_filesystem) $(addprefix $(build)/, main.o $(obj_POD) $(obj_GardenManipulation) $(obj_paths))
+$(bin): $(obj_filesystem) $(obj_diff) $(addprefix $(build)/, main.o $(obj_GardenManipulation) $(obj_paths) $(obj_POD)) 
 	@echo Detected OS: $(detected_OS)
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
 
 # TODO: delete if not used
 #	$(build)/filebuilder/FileBuilder.o  
-
-##===============================================================================##
-##			                   algo folder     									 ##
-##===============================================================================##
-$(build)/FOS_FILE_S.o: $(root)/FOS/FILE_S.cpp
-	@echo "making $@..."
+$(build)/FOS_metadata.o: $(root)/FOS/FOS_metadata.cpp $(root)/FOS/FOS_metadata.h $(root)/FOS/FOS_metadata_struct.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(build)/FOS_METADATA.o: $(root)/FOS/FOS_metadata.cpp
-	@echo "making $@..."
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-DIFF.o: $(call FIXPATH, $(root)/algo/Diff.cpp)
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/algo/Diff.cpp) -o $(call FIXPATH,$(build)/DIFF.o)
-	@echo
-
-JUXTAPOSE.o: $(root)/algo/Juxtapose.cpp
-	@echo "making $@..."
-	g++ -c $(call FIXPATH,$(root)/algo/Juxtapose.cpp) -o $(call FIXPATH,$(build)/JUXTAPOSE.o)
-	@echo
-
-
+$(build)/FOS_metadata_c_api.o: $(root)/FOS/FOS_metadata_c_api.c $(root)/FOS/FOS_metadata_struct.h
+	$(CC) $(CFLAGS) -c $< -o $@
+	
 ##===============================================================================
 ##			                   GardenManipulation
 ##===============================================================================
@@ -111,10 +88,3 @@ $(build)/main.o: $(root)/main.cpp
 run: all
 	./main.exe
 # Clean build directory
-
-clean:
-	$(RM) $(call FIXPATH, $(build)/**/*.o)
-	$(RM) $(call FIXPATH, $(build)/*.o)
-	$(RM) $(call FIXPATH, *.exe)
-	#del /s /q build\*.o 2>nul
-	#for /d %%D in $(build)\* do @rmdir /s /q "%%D" 2>nul

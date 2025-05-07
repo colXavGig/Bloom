@@ -13,31 +13,28 @@ using namespace std;
 
 
 void FileBuilder::build(const std::string& treeHash) {
-    nav.walk(treeHash, fileBuilderCallback);  
-}
+    nav.walk(treeHash, [&](FOS_metadata* meta, std::string fullPath) {
 
-void FileBuilder::fileBuilderCallback(FOS_metadata* entry, std::string fullPath) {
-
-    LOG("in fileBuilderCallBack");
-    fs::path src = SP::_TESTPATH();
-    fs::path dest = (src / fullPath).lexically_normal();
-
-    if (entry->getType() == "[FOLDER]") {
-        fs::create_directories(dest);
-    } 
-    else if (entry->getType() == "[FILE]"){
-        LOG(("\t"+entry->getName()).c_str());
-        fs::path filePath = SP::_SEEDROOT(entry->getHash());
-
-        fs::create_directories(dest.parent_path());
-        if (fs::exists(filePath)) {
-
-            fs::copy(filePath, dest, fs::copy_options::overwrite_existing);
-        } else {
-            cerr << "Missing file in garden store: " << filePath << "\n";
+        LOG("in fileBuilderCallBack");
+        fs::path src = SP::_TESTPATH();
+        fs::path dest = (src / fullPath).lexically_normal();
+    
+        if (meta->getType() == "[FOLDER]") {
+            fs::create_directories(dest);
+        } 
+        else if (meta->getType() == "[FILE]"){
+            LOG(("\t"+meta->getName()).c_str());
+            fs::path filePath = SP::_SEEDROOT(meta->getHash());
+    
+            fs::create_directories(dest.parent_path());
+            if (fs::exists(filePath)) {
+    
+                fs::copy(filePath, dest, fs::copy_options::overwrite_existing);
+            } else {
+                cerr << "Missing file in garden store: " << filePath << "\n";
+            }
         }
-        cout <<"here";
-    }
+    });  
 }
 
 void FileBuilder::reset(){

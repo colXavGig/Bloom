@@ -25,6 +25,7 @@ Index_s *Index::getStructuralValue() {
 }
 
 void Index::save() {
+    
     LOG(SP::_INDEX().string().c_str());
     std::ofstream ofs(SP::_INDEX().string());
     LOG((getCurrentName() + getTagHash()).c_str());
@@ -50,10 +51,11 @@ Index::operator Index_s *() {
 //            PRIVATE           //
 //////////////////////////////////
 
-void Index::read() {
-  LOG("Setting up index...");
+bool Index::read() {
+    LOG("Setting up index...");
 
-  ifstream ifs(SP::_INDEX());
+    ifstream ifs(SP::_INDEX());
+
     if (ifs.good()) {
         std::string line; 
         getline(ifs,line); 
@@ -77,11 +79,10 @@ void Index::read() {
         }
         ifs.close();
                                                                                             LOG(("index done"));
-        return;   
+        return true;   
     } else {
-        throw ios_base::failure("Could not open index file at: " + SP::_INDEX().string()); 
-    }
-       
+        return false; 
+    } 
 }
 
 

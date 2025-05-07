@@ -1,7 +1,7 @@
 #pragma once
 #include "../FOS/FOS_metadata.h"
 #include "Block.h"
-#include "diff.h"
+#include "Diff.h"
 #include "../paths/GardenPath.h"
 #include <stdio.h>
 #include <string>
@@ -24,7 +24,7 @@ class Juxtapose{
 
         void loadBlocks(const char* signature, std::vector<Block>& blockList);
     public:   
-        void parseMetadata(const char *sign1, const char *sign2, std::string path);
+        void parseMetadata(const std::string& sign1, const std::string& sign2, std::string path);
         void compareBlocks();
 
         Diff getroot(){ return root; }

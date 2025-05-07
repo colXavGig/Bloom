@@ -4,7 +4,7 @@
 #include "../debugging.h"
 
 
-
+Navigation::~Navigation() {}
 
 
 void Navigation::walk(const std::string& treeHash, WalkCallback callback) {

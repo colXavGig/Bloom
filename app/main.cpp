@@ -15,11 +15,11 @@
 #include "fileSystemManagement/utilz/PathManagement/StaticPath.h"
 using SP = staticpath::_staticPath;
 
-
+#include "DiffEngine/TreeDiff.h"
 int main(int argc, char** argv){
+
     SP::SET(std::make_unique<GardenPath>("."));
     Index index = Index();
-
 
     string cmd = (argc > 1) ? argv[1] :/* === DEFAULT === */ "commit";
                                                                                                                         LOG(("Command : " + cmd).c_str());
@@ -34,8 +34,8 @@ int main(int argc, char** argv){
     }
     else if (cmd == "commit") {// commit and update necessary component
         try{
+            index.read();
             //TODO:: handle les exceptions
-            index.read();//get info
             HashTree hashT = HashTree(new FolderNode("./app/testing"));//for testing
 
             fileWriter fw;
@@ -80,24 +80,43 @@ int main(int argc, char** argv){
     }
 
     else if (cmd == "diff") {
+        try{
+            index.read();
+            string headHash = "58b988d90e305b49b77858973feada6fe72a298f";    
+            string targetHash = "429e9e9ed1dbbf0a1342c420fdfe2393ab08accd";  
 
+            TreeDiff diffEngine;
+            diffEngine.compareTrees(headHash, targetHash);
+
+            Diff& result = diffEngine.getDiff();
+
+            if (result.hasConflicts()) {
+                cout << "Merge conflicts detected!\n";
+            } else {
+                cout << "No conflicts.\n";
+            }
+            result.readAll(); 
+        } catch (const std::exception& e) {
+            cerr << "Fatal error: " << e.what() << std::endl;
+        }
     }
     else if (cmd == "merge") {
+        index.read();
         //find commun commit
         
     }
     else if (cmd == "revert") {
-  
+        index.read();
     }
 
     //////////////////////////////
     //          Garden          //
     //////////////////////////////    
     else if (cmd == "push") {
-       
+        index.read();
     }
     else if (cmd == "pull") {
-
+        index.read();
     }
     //////////////////////////////
     //          tags            //
@@ -106,9 +125,10 @@ int main(int argc, char** argv){
     else if(cmd == "tag"){
         std::string subcmd = argv[2];
         if (cmd == "ls") {
-           
+            index.read();
         }
     }
+    
     LOG("before save");
     index.save();
     LOG("success");

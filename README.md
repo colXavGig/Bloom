@@ -1,7 +1,7 @@
 # Bloom
 A distributed version control system. An alternative to git and github
 
-  __TABLE DE MATIERE__
+  __TABLE DE MATIERE__ 
   
 1. [Objectif](#Objectif)
     - [Objectif personnel](#Objectif-personnel)
@@ -65,8 +65,8 @@ Fonctionnalités :
 |Enregistrement dans un CAS, afin de juste enregistrer les modifications necessaires.|
 | :--------------------------------------------------------------------------------: |
  
-|Avoir un système de versionnage afin de pouvoir reculer dans des anciennes versions.|
-| :--------------------------------------------------------------------------------: |
+| Avoir un système de versionnage afin de pouvoir reculer dans des anciennes versions. |
+|:------------------------------------------------------------------------------------:|
  
 
 > __Un produit alternatif :__  

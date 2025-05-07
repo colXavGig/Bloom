@@ -4,6 +4,7 @@
 #include <string>
 #include <filesystem>
 #include <openssl/sha.h>
+#include <nlohmann/json.hpp>
 
 #include "HashNode_struct.h"
 
@@ -74,6 +75,7 @@ class HashNode {
          */
         virtual void generateSignature() = 0;
         virtual void setContent(HashNode_content *content) =  0;
+        
 
         /**
          * Set the path of the HashNode to the provided value
@@ -121,6 +123,10 @@ class HashNode {
          */
         HashNode_s *getStructValue();
 
+        virtual nlohmann::json toJson() = 0;
+
+
+
  };
 
 
@@ -151,8 +157,10 @@ class FileNode : public HashNode{
     FileNode(const fs::path &path,const string filename,const string signature)
     :HashNode(path, filename, signature, FILENODE) {}
 
+    string getContent();
     void setContent(string content);
     void setContent(HashNode_content *content) override;
+    nlohmann::json toJson() override;
 
 
     /** Implicit conversion to HashNode_s pointer */
@@ -195,6 +203,9 @@ class FolderNode :public HashNode{
         void addfolder(FolderNode *node){
             folderNodes.push_back(node);
         }
+
+        nlohmann::json toJson() override;
+
     private:
         //afin d'eviter le dynamic casting je fais deux vector
         //un pour files et l'autre pour fichier

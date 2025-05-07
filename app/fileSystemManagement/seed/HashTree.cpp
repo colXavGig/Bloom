@@ -13,6 +13,12 @@
         createProjectTree(getRoot());
     }
 
+    nlohmann::json HashTree::toJson() {
+        nlohmann::json j;
+        j["folder_node"] = getRoot()->toJson();
+        return j;
+    }
+
     // HashTree::HashTree(GardenTags *tag):root(tag->getRoot()) {
     //     createGardenTree(root);
     // }

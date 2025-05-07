@@ -1,17 +1,19 @@
-#include "HttpRequest.h"
+#include "RemoteHandler.h"
 #include <iostream>
 #include <sstream>
+#include <curl/curl.h>
+#include <nlohmann/json.hpp>
 
-HttpRequest::HttpRequest(const std::string& url) : _url(url) {
+RemoteHandler::RemoteHandler(const std::string& url) : _url(url) {
     curl_global_init(CURL_GLOBAL_ALL);
 }
 
-HttpRequest::~HttpRequest() {
+RemoteHandler::~RemoteHandler() {
     curl_global_cleanup();
 }
 
-void HttpRequest::setJsonBody(const std::string& json) {
-    _json = json;
+void RemoteHandler::setJsonBody(GardenTag& tag) {
+    _json = tag.toJson().dump();  // Convert the GardenTag object to JSON string
 }
 
 
@@ -20,8 +22,11 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
     return size * nmemb;
 }
 
-std::string HttpRequest::sendPost() {
+std::string RemoteHandler::push(GardenTag& tag) { 
     CURL* curl = curl_easy_init();
+
+    setJsonBody(tag);
+    
     std::string response;
 
     if (curl) {
@@ -31,6 +36,7 @@ std::string HttpRequest::sendPost() {
         curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
         curl_easy_setopt(curl, CURLOPT_POST, 1L);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _json.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, _json.length());
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
@@ -46,7 +52,7 @@ std::string HttpRequest::sendPost() {
     return response;
 }
 
-std::string HttpRequest::sendGet() {
+GardenTag& RemoteHandler::pull() {
     CURL* curl = curl_easy_init();
     std::string response;
 
@@ -63,5 +69,7 @@ std::string HttpRequest::sendGet() {
         curl_easy_cleanup(curl);
     }
 
-    return response;
+    nlohmann::json data = nlohmann::json::parse(response);
+    // return response;
+    throw std::runtime_error("Not implemented yet");
 }

@@ -1,15 +1,21 @@
+#pragma once
 #include <string>
 #include <curl/curl.h>
 
-class HttpRequest {
+#include "../fileSystemManagement/garden_tags/GardenTag.h"
+
+class RemoteHandler {
 public:
-    HttpRequest(const std::string& url);
-    ~HttpRequest();
+    RemoteHandler(const std::string& url);
+    ~RemoteHandler();
 
-    void setJsonBody(const std::string& json);
-    std::string sendPost();
-
-private:
+    std::string push(GardenTag& garden);
+    
+    GardenTag& pull();
+    
+    private:
     std::string _url;
     std::string _json;
+
+    void setJsonBody(GardenTag& tag);
 };

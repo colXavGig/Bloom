@@ -46,6 +46,13 @@ GardenTag::GardenTag(std::string hash) {
     tag = alloc_tag(tagData[2].c_str(), tagData[0].c_str(), tagData[1].c_str());
 }
 
+GardenTag::GardenTag(nlohmann::json data) {
+    tag = alloc_tag(
+        ((std::string)data["tree"]["folder_node"]["signature"]).c_str(),
+
+    )
+}
+
 ///////////////////////////////
 //      functionnality       //
 ///////////////////////////////
@@ -65,9 +72,37 @@ void GardenTag::write(){
     outFile.close();
 }
 
-GardenTag GardenTag::previousTag(GardenTag& tag){   
-    GardenTag previous = GardenTag(tag.getParentHash());
+GardenTag GardenTag::previousTag(){   
+    GardenTag previous = GardenTag(this->getParentHash());
     return previous;
+}
+
+nlohmann::json GardenTag::toJson() {
+    nlohmann::json j;
+    j["signature"] = getTagHash();
+    j["message"] = getMessage();
+    j["timestamp"] = getTimestamp(); 
+    j["tree"] = getRoot()->toJson(); 
+    if (getParentHash() != "FIRST") { // TODO: add to the json object only if the tag has a parent
+        j["parent"] = previousTag().toJson();
+    }
+    return j;
+}
+
+GardenTag GardenTag::fromJson(nlohmann::json data) {
+    return GardenTag(data);
+}
+
+nlohmann::json GardenTag::toJsonToSignature(std::string signature) {
+    nlohmann::json j;
+    j["signature"] = getTagHash();
+    j["message"] = getMessage();
+    j["timestamp"] = getTimestamp(); 
+    j["tree"] = getRoot()->toJson(); 
+    if (this->getTagHash() != signature && getParentHash() != "") { // TODO: add to the json object only if the tag has a parent
+        j["parent"] = previousTag().toJson();
+    }
+    return j;
 }
 
 
@@ -81,8 +116,14 @@ string GardenTag::getTagHash() {
 string GardenTag::getRootHash() {
     return tag->tree_hash;
 }
-string GardenTag::getParentHash() {
-  return tag->parent_hash;
+HashTree *GardenTag::getRoot()
+{
+    // TODO: Implement a way to find the hashtree from the root hash
+    throw std::runtime_error("Not implemented");
+}
+string GardenTag::getParentHash()
+{
+    return tag->parent_hash;
 }
 string GardenTag::getMessage() {
   return tag->message;
@@ -94,6 +135,9 @@ string GardenTag::getTimestamp() {
 GardenTag_s *GardenTag::getStructValue() {
   return tag;
 }
+
+
+
 
 
 /////////////////////////////////////////////

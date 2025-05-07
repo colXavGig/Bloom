@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 #include "HashNode.h"
 #include "../../fileSystemManagement/garden_tags/GardenTag_struct.h"
@@ -23,6 +24,9 @@ class HashTree {
         FolderNode* getRoot() const {
             return root;
         }
+
+        nlohmann::json toJson();
+        
 
     private:
         FolderNode *root;

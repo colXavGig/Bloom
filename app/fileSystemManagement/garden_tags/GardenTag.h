@@ -2,8 +2,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 #include "GardenTag_struct.h"
+#include "../seed/HashTree.h"
 #include "../utilz/GardenProtocol/GardenProtocol.h"
 #include "../utilz/PathManagement/StaticPath.h"
 
@@ -33,20 +35,29 @@ class GardenTag{
             this->tag = value;
         }
 
+        GardenTag(nlohmann::json data);
+
         string getTagHash();
         string getRootHash();
+        HashTree* getRoot(); // needed for toJson()
         string getParentHash();
         string getMessage();
         string getTimestamp();     
         GardenTag_s *getStructValue();
-
+        
+        
         ///////////////////////////
         //     functionnality    //
         ///////////////////////////
-
+        
         void write();
 
-        GardenTag previousTag(GardenTag& tag);
+        nlohmann::json toJson();
+        nlohmann::json toJsonToSignature(std::string signature);
+
+        static GardenTag fromJson(nlohmann::json data);
+
+        GardenTag previousTag(); // NOTE: Doesnt need a reference to a tag, it can use the this keyword
 
         operator GardenTag_s *() {
             return tag;

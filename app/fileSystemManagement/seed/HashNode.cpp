@@ -70,6 +70,10 @@ void HashNode::setSignature(string signature) {
     ///        FILENODE        ///
     //////////////////////////////
 
+    string FileNode::getContent() {
+      return value->content->file_content;
+    }
+
     void FileNode::setContent(string content){
         value->content->file_content = new char[content.size() + 1];
         strcpy(value->content->file_content, content.data() );
@@ -77,6 +81,22 @@ void HashNode::setSignature(string signature) {
 
     void FileNode::setContent(HashNode_content* content){
       setContent(content->file_content);
+    }
+
+    void FileNode::generateSignature(){
+      this->value->signature = new char[41];
+      fileHash(getPath().string().c_str(),value->signature);
+  }
+
+    nlohmann::json FileNode::toJson() {
+      nlohmann::json j;
+
+      j["signature"] = this->getSignature();
+      j["filename"] = this->getFileName();
+      j["path"] = this->getPath();
+      j["content"] = this->getContent();
+
+      return j;
     }
 
     //////////////////////////////
@@ -122,9 +142,28 @@ void HashNode::setSignature(string signature) {
 
     /*
      */
-    void FileNode::generateSignature(){
-        this->value->signature = new char[41];
-        fileHash(getPath().string().c_str(),value->signature);
+    
+
+    nlohmann::json FolderNode::toJson() {
+      nlohmann::json j;
+
+      j["signature"] = this->getSignature();
+      j["filename"] = this->getFileName();
+      j["path"] = this->getPath();
+
+      std:vector<nlohmann::json> subfolders;
+      for (auto folder : this->getFolders()) {
+        subfolders.push_back(folder->toJson());
+      }
+      j["subfolders"] = subfolders;
+
+      std::vector<nlohmann::json> subfiles;
+      for (auto file : this->getFiles()) {
+        subfiles.push_back(file->toJson());
+      }
+      j["subfiles"] = subfiles;
+
+      return j;
     }
    
     

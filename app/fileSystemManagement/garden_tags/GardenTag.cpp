@@ -47,10 +47,15 @@ GardenTag::GardenTag(std::string hash) {
 }
 
 GardenTag::GardenTag(nlohmann::json data) {
+    std::string parent_signature = "FIRST";
+    if (data.contains("parent")) {
+        parent_signature = data["parent"]["signature"];
+    }
     tag = alloc_tag(
         ((std::string)data["tree"]["folder_node"]["signature"]).c_str(),
-
-    )
+        parent_signature.c_str(),
+        ((std::string)data["message"]).c_str()
+    );
 }
 
 ///////////////////////////////

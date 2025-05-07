@@ -1,7 +1,7 @@
 # Bloom
 A distributed version control system. An alternative to git and github
 
-  __TABLE DE MATIERE__
+  __TABLE DE MATIERE__ 
   
 1. [Objectif](#Objectif)
     - [Objectif personnel](#Objectif-personnel)

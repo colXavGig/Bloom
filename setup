@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+
+set -e
+
+os_name=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+
+supported_os=(
+	"ubuntu"
+	"macos"
+	"manjarolinux"
+)
+
+case $os_name in
+	"ubuntu")
+		echo "Updating package lists..."
+		sudo apt-get update
+
+		echo "Installing OpenSSL development libraries..."
+		sudo apt-get install -y libssl-dev
+
+		echo "OpenSSL installation complete!"
+		;;
+	"macos")
+		echo "Installing OpenSSL development libraries..."
+		brew install openssl
+
+		echo "OpenSSL installation complete!"
+		;;
+	"manjarolinux")
+		echo "Updating package lists..."
+		sudo pacman -Syu
+
+		echo "Installing OpenSSL development libraries..."
+		sudo pacman -S --noconfirm --needed openssl
+
+		echo "OpenSSL installation complete!"
+		;;
+	*)
+		echo "Unsupported OS: $os_name"
+		exit 1
+		;;
+esac
+	

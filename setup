@@ -28,6 +28,9 @@ case $os_name in
 		echo "OpenSSL installation complete!"
 		;;
 	"manjarolinux")
+		echo "Updating package lists..."
+		sudo pacman -Syu
+
 		echo "Installing OpenSSL development libraries..."
 		sudo pacman -S --noconfirm --needed openssl
 

@@ -3,3 +3,5 @@
 .garden
 .idea
 /*.exe
+.zig-cache
+app/fileSystemManagement/build/

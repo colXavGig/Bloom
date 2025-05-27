@@ -2,9 +2,9 @@ name: Test compilation
 
 on:
   push:
-    branches: [ main ]
+    #branches: [ main ] # specify branches if needed
   pull_request:
-    branches: [ main ]
+    #branches: [ main ] # specify branches if needed
 
 jobs:
   makefile_build:
@@ -12,5 +12,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Setup Bloom
+      run: ./setup
     - name: Compile
       run: make

@@ -6,7 +6,7 @@
 //hash size
 #define HASH_SIZE 20
 //line / file size
-#define LINE_SIZE 1000
+#define LINE_SIZE 256
 /*pseudo code de getline
     chercher un char 
     assurer qu'il n'est pas EOF
@@ -16,14 +16,13 @@
         unsigned char line[LINE_SIZE];
         int i = 0;
         int c;
-    
-        while ((c = fgetc(fptr)) != EOF && c != '\n') {
-            line[i++] = c;
-        }
-        line[i] = '\0';
+        while((c =fgetc(fptr)) != EOF && c !='\n' && i != LINE_SIZE-1) {
+             line[i++]=c;
+        }          
+        line[i] = '\0';//finish string
     
         if (i > 0 || c == '\n') {
-            SHA1(line, strlen((char*)line), hash);
+            SHA1(line, i, hash);
             return TRUE;
         }
     

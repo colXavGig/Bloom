@@ -1,0 +1,18 @@
+name: Test compilation
+
+on:
+  push:
+    #branches: [ main ] # specify branches if needed
+  pull_request:
+    #branches: [ main ] # specify branches if needed
+
+jobs:
+  makefile_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Bloom
+      run: ./setup
+    - name: Compile
+      run: make

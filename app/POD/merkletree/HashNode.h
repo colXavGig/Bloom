@@ -181,18 +181,18 @@ class FolderNode :public HashNode{
             HashNode(path, filename, signature, FOLDERNODE) {}
 
 
-        vector<FileNode *> getFiles()const {
+        vector<FileNode *> get_files()const {
             return this->fileNodes;
         }
 
-        vector<FolderNode *> getFolders()const {
+        vector<FolderNode *> get_folders()const {
             return this->folderNodes;
         }
 
-        void addfile(FileNode *node){
+        void add_file(FileNode *node){
             fileNodes.push_back(node);
         }
-        void addfolder(FolderNode *node){
+        void add_folder(FolderNode *node){
             folderNodes.push_back(node);
         }
     private:
